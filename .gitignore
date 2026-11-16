@@ -1,0 +1,5 @@
+.ucm/
+.unisonHistory
+.qa/
+*.output.md
+*.uc
