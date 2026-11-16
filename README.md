@@ -1,21 +1,25 @@
-# Word Pop! — The Word Kitchen
+# Word Pop! — Junior Chef Challenge
 
-A colorful culinary spelling adventure written in **Unison**, hosted on **Unison Cloud**. No JavaScript is shipped or required. Unison renders every page and processes game actions; CSS handles the card flip, motion, responsive layout, and celebrations. Audio uses native HTML controls.
+A culinary spelling adventure for a nine-year-old, written in **Unison** and hosted on **Unison Cloud**. A realistic kitchen, recipe cards, and collectible treats turn practice into a junior-chef challenge. No JavaScript is shipped or required. Unison renders every page and processes game actions; CSS handles the card flip, motion, responsive layout, and celebrations. Audio uses native HTML controls.
 
 **Play:** https://wolfbreed1829.unison-services.cloud/s/word-pop/
 
 ## A kitchen that grows with you
 
-Each newly mastered word adds a cupcake, cookie, or macaron to a clickable 20-slot collection. New treats pop into place and Chef Star celebrates. The illustrated kitchen develops with your progress:
+Each newly mastered word adds a cupcake, cookie, or macaron to a clickable 20-slot collection. New treats pop into place, and the realistic kitchen photograph changes at each milestone:
 
 | Words mastered | Kitchen reward | Chef badge |
 | --- | --- | --- |
-| 5 | Working stand mixer | Mix master |
-| 10 | Full cookie jar | Cookie captain |
-| 15 | Celebration cake | Pastry pro |
+| 5 | Red stand mixer | Mixer Master |
+| 10 | Full cookie jar | Baker |
+| 15 | Celebration cake | Pastry Chef |
 | 20 | Candles, bunting, and a kitchen party | Head chef |
 
 Wrong answers preserve existing rewards. Refreshing or repeating a correct answer does not duplicate treats. Flashcard mastery also earns a treat. The kitchen, tray, badges, feedback, and progress are all rendered directly from the same Unison round state.
+
+## iPad play
+
+Open the play link in Safari. Portrait mode places the game above the score and collection panels; landscape mode puts progress alongside the game. Touch controls are at least 44 CSS pixels, with larger answer buttons and 22-pixel spelling inputs. Autocorrect, automatic capitalization, and spellchecking are disabled for answers. Audio starts only after tapping its native play control. Safe-area padding, Safari card-flip styles, browser zoom, and reduced-motion preferences are supported. The game requires an internet connection.
 
 ## Play modes
 
@@ -51,13 +55,16 @@ chcp.com 65001
 ucm run.compiled .ucm/deploy.uc
 ```
 
-`pop.deploy` uploads the service and assigns the stable name `word-pop` under the authenticated account. CSS and the 20 audio clips are captured as part of the deployed Unison service; no separate asset server is needed. Rebuild after changing Unison source. Asset-only edits are picked up by the deploy command.
+`pop.deploy` uploads the service and assigns the stable name `word-pop` under the authenticated account. The pure handler is deployed with `Cloud.deploy.remote` and `Cloud.exposeHttp`, without a pooled ability wrapper. CSS is captured by the service. Audio and kitchen artwork load from immutable public GitHub commits, keeping those files out of the game request closure. Rebuild after changing Unison source. CSS-only edits are picked up by the deploy command. If replacing recordings or artwork, commit them and update the pinned URLs in `pop.audio` or `assets/studio.css`.
 
 ## Source map
 
 - `src/game.u` — typed deck, answer normalization, scoring, rounds, interactive kitchen rendering, HTTP service, local server, deployment, and nine native Unison test groups.
-- `assets/style.css` — visual design and responsive styles. Nunito is loaded from Google Fonts with a system-font fallback.
-- `assets/kitchen.css` — gingham and wood surfaces, the illustrated kitchen, collectible treats, chef badges, and CSS reward animations.
+- `assets/style.css` — base layout and responsive styles. Manrope is loaded from Google Fonts with a system-font fallback.
+- `assets/kitchen.css` — kitchen layout, collectible treats, chef badges, and CSS reward animations.
+- `assets/studio.css` — realistic junior-chef styling, photographic stages, and iPad/touch layouts.
+- `assets/chef-kitchen-v2.png` — generated artwork containing five kitchen stages, selected with CSS background positioning.
+- `assets/kitchen-artwork.txt` — artwork source and generation prompt.
 - `assets/audio/*.wav` — the 20 word recordings, included in the repository.
 - `scripts/audio.ps1` — optional Windows speech synthesis regeneration; not required to run the app.
 - `scripts/build.ps1` — UCM transcript orchestration. There is no Node/npm toolchain.
@@ -73,5 +80,8 @@ Verified with UCM 1.3.0:
 - A full round completes with browser JavaScript disabled. A round including one incorrect attempt produces 20 treats, all four kitchen unlocks, and 195 points. Refreshing a correct answer preserves the treat count.
 - Keyboard card flipping, the pause-motion toggle, reduced-motion preferences, native audio, and flashcard reward animation were checked.
 - Desktop and mobile layouts were visually inspected. Widths of 320, 390, 768, and 1440 pixels have no horizontal overflow.
+- WebKit 26 touch emulation with JavaScript disabled passed at 768, 820, 1024, 1180, and 1366 CSS pixels: no horizontal overflow, primary tap targets at least 44 pixels, card flipping, native WAV playback, spelling mistakes/retries, Enter-key submission, refresh protection, scramble mode, and all five kitchen photographs. This is browser-engine testing on Windows, not a physical iPad test. Test media was served from the committed local assets; public asset responses were checked separately.
+
+The new design is deployed, but public Unison Cloud requests intermittently time out or return HTTP 500. Local game and iPad/WebKit checks pass. Reliable public hosting remains unresolved as of November 16, 2026.
 
 The hosted application is on Unison Cloud. GitHub stores its source; GitHub Pages is not used because this application runs native Unison on the server.

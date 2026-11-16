@@ -1,0 +1,226 @@
+
+/* Junior Chef: natural materials, photographic progression, clear recipe cards. */
+:root{--ink:#253b32;--purple:#32644d;--pink:#b45b3e;--muted:#687267;font-family:Manrope,'Trebuchet MS',sans-serif;background:#eee9dd;color:#293b32}
+body{background:#eee9dd;background-image:radial-gradient(#8a775315 .6px,transparent .6px);background-size:5px 5px}
+.topbar{background:#f9f7ef;border-bottom:1px solid #d6d0bf}
+.topbar .wrap{height:84px}
+.brand{font-size:25px;letter-spacing:-1px;font-weight:800;color:#243d32}
+.brand-icon{background:#355a44;border-radius:8px;transform:rotate(-5deg);box-shadow:2px 3px 0 #a2af9b;font-family:Georgia,serif;font-size:30px;font-weight:700}
+.brand em{color:#a45b3e}
+.brand small{color:#7e866f;letter-spacing:1.8px;font-size:8px;margin-top:5px}
+.toplinks{font-weight:700;color:#465747}
+.small-pill{border:1px solid #d8d2bf;background:#eeeadb;color:#71765c;font-size:11px;font-weight:600;border-radius:6px}
+.culinary-hero{grid-template-columns:30% minmax(0,1fr);gap:16px 30px;padding-top:30px;padding-bottom:25px}
+.kitchen-intro .eyebrow{font-size:9px;letter-spacing:1.8px;color:#8a6b43;font-weight:800}
+.dot{background:#a76b39!important}
+.kitchen-intro h1{font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:47px;line-height:1.04;letter-spacing:-1.4px;color:#293f32;margin-bottom:15px}
+.kitchen-intro h1 em{color:#9a593a;font-style:italic}
+.kitchen-intro h1 em:after{display:none}
+.kitchen-intro p{font-size:12px;line-height:1.8;color:#6f7868;font-weight:500}
+.chef-rank{border-radius:6px;background:#e8ddbd;border:1px solid #c7b884;color:#776039;font-weight:800;font-size:10px;box-shadow:none;padding:8px 12px;margin-top:15px;text-transform:uppercase;letter-spacing:.6px}
+.chef-rank span{color:#ad8044}
+.kitchen-window{padding-bottom:26px;position:relative}
+.photo-kitchen{width:100%;aspect-ratio:3.333333;background-image:url('https://raw.githubusercontent.com/wolfbreed1829/word-pop-unison/ddae1908f5c205094635a8c078a697a62a724557/assets/chef-kitchen-v2.png');background-size:100% 500%;background-position:center calc(var(--scene) * 25%);border-radius:9px;border:5px solid #fffcf2;outline:1px solid #d1c5ab;box-shadow:0 7px 16px #59452c1a;position:relative}
+.photo-label{position:absolute;top:14px;right:14px;background:#f9f5e9ed;border:1px solid #ffffff7a;border-radius:4px;padding:7px 10px;font-size:7px;letter-spacing:1.1px;font-weight:700;color:#74745c}
+.photo-label b{display:block;font-size:11px;color:#344a3b;letter-spacing:.5px;margin-top:3px}
+.kitchen-caption{font-size:9px;font-weight:700;color:#737c69}
+.kitchen-light{background:#6f8c60}
+.bake-shelf{border:1px solid #c9c5b6;border-bottom:4px solid #b9af95;border-radius:8px;background:linear-gradient(#f8f7ed,#e8e4d6);box-shadow:0 4px 8px #5c4a3310;padding:13px 16px 8px}
+.shelf-label strong{font-size:9px;letter-spacing:1.4px;color:#68725c;font-weight:800}
+.shelf-label>span{font-size:10px;color:#6b745d;font-weight:700}
+.treat-slot{border-radius:5px;height:55px}
+.treat-slot.baked{background:#e3dfca;box-shadow:inset 0 1px 3px #7f74551a}
+.treat-slot.locked .treat-art{filter:grayscale(1);opacity:.18}
+.treat-slot.baked .treat-art{filter:saturate(.7) drop-shadow(1px 3px 1px #68573530)}
+.treat-slot:hover{background:#ded8c4;transform:translateY(-3px)}
+.treat-number{color:#9b9e8c;font-size:8px;font-weight:800}
+.treat-slot.baked .treat-number{color:#5c7455}
+.mode-tabs{border-radius:9px;padding:5px;background:#dcdccb;border:1px solid #c6c9b4;gap:5px}
+.mode-tabs a{font-size:12px;font-weight:800;border-radius:5px;color:#727b65;padding:13px 6px}
+.mode-tabs a.active{background:#395e45;color:#fffaf0;box-shadow:0 2px 3px #22372940}
+.card-stage{background-color:#cdb48b;background-image:repeating-linear-gradient(2deg,transparent 0,transparent 4px,#79522907 5px,transparent 7px),repeating-linear-gradient(0deg,#ffffff06 0,#ffffff06 49px,#79542c18 50px,#ffffff16 53px);border:1px solid #b49972;border-bottom:5px solid #ab895e;border-radius:10px;box-shadow:0 7px 12px #68523217;padding:20px 28px 26px}
+.stage-top{color:#735b37;font-size:9px;font-weight:800;letter-spacing:1px;margin-bottom:20px}
+.stage-top b{color:#735b37}
+.flash:before{background:#c7b18b;border-radius:8px;transform:rotate(-1.4deg)}
+.face,.question{background-color:#fffdf3;border:1px solid #e6dfcb;border-radius:8px;box-shadow:1px 4px 0 #af97705e}
+.face{background-image:repeating-linear-gradient(transparent 0,transparent 31px,#b1b4a71a 32px,transparent 33px)}
+.face-label{font-size:9px;letter-spacing:1.3px;color:#97977d;font-weight:700;left:23px;top:21px}
+.face-star{font-size:17px;color:#b29555}
+.face,.flash-inner{min-height:260px}
+.word{font-family:Manrope,'Trebuchet MS',sans-serif;font-weight:800;font-size:72px;letter-spacing:1px;color:#293d31}
+.word mark{color:#a85d3d}
+.word.long{font-size:51px}
+.syllable{color:#8b927e;font-size:10px;letter-spacing:1.2px;font-weight:600}
+.flip-label{color:#6d775e;background:#f2ecd9;border:1px solid #bfb499;border-radius:5px;font-size:10px;font-weight:700;padding:8px 16px}
+.flip-label:hover{background:#fffaf0}
+.audio-row{gap:12px}
+.audio-row span{color:#766542;font-size:9px;letter-spacing:.4px}
+.audio-row audio{opacity:.96}
+.btn{border-radius:6px;font-size:12px;font-weight:800;letter-spacing:.2px;min-height:45px;padding:12px 23px}
+.btn.green,.btn.purple{color:#fffaf1;background:#3c654c;box-shadow:0 3px 0 #254e35;border:1px solid #365940}
+.btn.yellow{color:#776139;background:#e8d7ad;box-shadow:0 3px 0 #bca375;border:1px solid #ccb78c}
+.card-foot{color:#7b816c;font-size:10px;font-weight:600}
+.circle-btn{background:#f5f1e3;border-color:#c5c4ae;color:#6f775f;border-radius:5px}
+.progress-dots i{background:#d1d0bc}
+.progress-dots .done{background:#91a178}
+.progress-dots .current{background:#567455}
+.stats-card,.word-bank,.badge-card{border-radius:8px;background:#f9f7eb;border:1px solid #d4d0bc;border-bottom:3px solid #c5bda2}
+.panel-heading h2{font-size:13px;font-weight:800;color:#43533e}
+.panel-heading span{color:#8e927b;font-size:9px;font-weight:500}
+.stats-card{padding:20px}
+.progress-top{font-size:10px;font-weight:600;color:#777e67}
+.progress-top b{color:#52694a;font-weight:800}
+.progress-bar{height:8px;background:#e2e3d1;border-radius:3px}
+.progress-bar>div{background:linear-gradient(90deg,#94a276,#4b714e);border-radius:3px}
+.stat-box,.stat-box.pink{background:#eee8d5;border-radius:5px}
+.stat-box.pink{background:#e4e8d8}
+.stat-box b{font-size:23px;font-weight:800;color:#485639}
+.stat-box span,.stat-box.pink span{font-size:8px;letter-spacing:1px;color:#858262;font-weight:700}
+.mascot-card{background:#dedfc9;border:1px solid #bfc6a5;border-bottom:3px solid #b4bd96;border-radius:8px;padding:18px 14px;gap:10px}
+.mascot-card strong{font-size:12px;font-weight:800;color:#4c5c3f;line-height:1.5}
+.mascot-card p{font-size:10px;font-weight:500;color:#758362;line-height:1.7}
+.mascot.chef-emblem{width:64px;height:64px;filter:none;animation:none}
+.chef-cheering .mascot{animation:appliance-reveal .6s ease-out}
+.badge-card{padding:18px 15px}
+.chef-badge>span{background:#e5e2d1;border:1px dashed #b4b597;border-radius:5px;height:35px;width:35px;font-family:Georgia,serif;font-size:18px;font-weight:400;color:#8d8e72;box-shadow:none}
+.chef-badge{opacity:.5}
+.chef-badge strong{font-size:8px;font-weight:700;color:#6a7659}
+.chef-badge small{font-size:7px;color:#8e927b}
+.chef-badge.earned>span,.chef-badge:nth-child(2).earned>span,.chef-badge:nth-child(3).earned>span,.chef-badge:nth-child(4).earned>span{border:1px solid #a69662;background:linear-gradient(140deg,#e5d7ac,#c1af76);box-shadow:0 2px 0 #9d8a5726;color:#6d5d30}
+.word-bank{padding:18px}
+.word-chip{background:#eae9da;border-radius:4px;font-size:10px;font-weight:700;color:#858773}
+.word-chip.selected{color:#3e6248;background:#dae4d2;border-color:#9fb494}
+.word-chip.done{color:#527348;background:#e0e8d7}
+.bank-foot{color:#838b73;font-size:9px;font-weight:500}
+.tip{background:#f6efda;border:1px solid #d9ccaa;border-radius:7px;gap:12px}
+.tip-icon{font-size:23px;color:#a58c50}
+.tip strong{font-size:11px;font-weight:800;color:#77633e}
+.tip p{font-size:11px;font-weight:500;color:#8c7e5b}
+.shuffle{background:#f5f0e1;border:1px solid #ddd5bd;border-radius:4px;font-size:10px;font-weight:600;color:#8b7b57}
+.question{padding:27px 25px}
+.question h2{font-size:22px;font-weight:800;color:#465840}
+.question p,.question label{font-size:12px;color:#81876e;font-weight:500}
+.question label{font-size:9px;font-weight:800;letter-spacing:1.3px}
+.question .result-icon{color:#9a8556}
+.answer-row input{background:#faf8eb;border:1px solid #b6bea2;border-radius:5px;font-weight:700;color:#40553e;font-size:22px}
+.answer-row input::placeholder{color:#a4ab94;font-weight:500;font-size:18px;letter-spacing:.3px}
+.feedback{border:1px solid #b9c7a4;border-radius:5px;background:#e4ecd8;color:#567349}
+.feedback h2{color:#4e6e45;font-size:20px;font-weight:800}
+.feedback p{color:#728763;font-size:11px}
+.feedback.retry{border-color:#d2bd8a;background:#f4ead2}
+.feedback.retry h2{color:#9d7c3c}
+.feedback.retry p{color:#9e8e6b}
+.success-word{color:#a4633d;font-size:48px;font-weight:800}
+.scramble b{background:#dec99e;box-shadow:0 3px 0 #bda576;color:#725e3b;border-radius:4px;font-weight:700;transform:rotate(-2deg)}
+.scramble b:nth-child(3n+2){background:#c3cdb0;box-shadow:0 3px 0 #9eae87;color:#52643f;transform:rotate(3deg)}
+.scramble b:nth-child(3n){background:#dab7a0;box-shadow:0 3px 0 #b58c74;color:#885d44;transform:rotate(-1deg)}
+.bake-toast{border:1px solid #c3ba8b;border-radius:6px;background:#eee6c7;color:#7c703e;font-weight:700;font-size:11px}
+.bake-toast strong{color:#7d754d;font-size:9px}
+.bake-toast>span{color:#a38c44}
+.kitchen-celebrating.level-4 .chef-rank{background:#e3d7ae;border-color:#b7a46b;color:#786238}
+.kitchen-celebrating.level-4 .bake-shelf{background:linear-gradient(#f8f3df,#e5dbb9);border-color:#b8a675}
+.finished h2{font-family:Georgia,serif;font-weight:400;color:#3a563e}
+.score-big{color:#9d7541;font-family:Georgia,serif;font-weight:400}
+footer{border-top:1px solid #d2cbb6;color:#8b8a73;font-size:9px}
+.pause-label{color:#8b8a73}
+.mini-brand{font-weight:700;font-size:8px;letter-spacing:1.3px}
+.help h1{font-family:Georgia,serif;font-weight:400;color:#37553e}
+.help section{border-radius:7px;border:1px solid #d4cdb5;background:#f9f6e9}
+.help h2{color:#55674a;font-size:20px;font-weight:700}
+.help p{font-size:14px;color:#7c826c}
+@media(min-width:1600px){.kitchen-intro h1{font-size:54px}.photo-kitchen{aspect-ratio:3.333333}}
+@media(max-width:1000px){.culinary-hero{grid-template-columns:31% minmax(0,1fr);gap:14px 20px}.kitchen-intro h1{font-size:37px}.kitchen-intro p{font-size:10px}.kitchen-intro .eyebrow{font-size:7px;letter-spacing:1.1px}.photo-label{padding:5px 7px;top:11px;right:11px;font-size:6px}.photo-label b{font-size:9px}.chef-rank{font-size:8px;padding:6px 9px}.word.long{font-size:43px}.card-stage{padding:19px 18px 24px}.panel-heading h2{font-size:12px}}
+@media(max-width:720px){.topbar .wrap{height:74px}.brand{font-size:24px}.brand small{font-size:6px}.culinary-hero{grid-template-columns:1fr;gap:17px;padding-top:23px}.kitchen-intro{padding-right:130px}.kitchen-intro h1{font-size:38px;margin-bottom:10px}.kitchen-intro p{font-size:11px}.kitchen-intro .eyebrow{font-size:8px;letter-spacing:1.2px}.chef-rank{max-width:125px;top:45px;font-size:9px;padding:9px 10px}.photo-kitchen{aspect-ratio:3.333333;border-width:4px}.photo-label{font-size:6px;top:9px;right:9px}.photo-label b{font-size:8px}.kitchen-window{padding-bottom:21px}.kitchen-caption{font-size:8px}.bake-shelf{padding:12px 10px 8px}.shelf-label strong{font-size:7px}.shelf-label>span{font-size:8px}.treat-slot{height:43px}.mode-tabs a{font-size:11px;padding:12px 3px}.card-stage{padding:17px 16px 24px}.stage-top{font-size:8px;letter-spacing:.7px}.word{font-size:58px}.word.long{font-size:43px}.face,.flash-inner{min-height:235px}.face-label{font-size:8px}.syllable{font-size:9px}.btn{font-size:11px;padding:11px 18px}.stats-card{padding:16px}.mascot-card{padding:14px 10px;gap:7px}.mascot.chef-emblem{width:48px;height:48px}.mascot-card strong{font-size:11px}.mascot-card p{font-size:9px}.chef-badge strong{font-size:10px}.chef-badge small{font-size:8px}.question{padding:23px 16px}.question h2{font-size:21px}.progress-top{font-size:9px}.photo-label{opacity:.9}}
+@media(max-width:420px){.kitchen-intro{padding-right:105px}.kitchen-intro h1{font-size:35px}.kitchen-intro p{font-size:10px}.chef-rank{max-width:102px;top:48px;font-size:8px;padding:8px}.chef-rank span{font-size:10px}.photo-label{padding:3px 5px;top:7px;right:7px;font-size:5px}.photo-label b{font-size:7px}.treat-slot{height:39px}.treat-art{height:29px}.word.long{font-size:38px}.mode-tabs a{font-size:10px}.stage-top{font-size:7px}.card-stage{padding:16px 12px 23px}.audio-row span{font-size:8px}.btn{font-size:10px;padding:11px 16px}.mascot-card{gap:5px}.mascot.chef-emblem{width:38px;height:38px}.mascot-card strong{font-size:10px}.mascot-card p{font-size:8px}.panel-heading h2{font-size:11px}.progress-top{font-size:8px}.photo-kitchen{border-width:3px}}
+@media(prefers-reduced-motion:reduce){.kitchen-page *,.kitchen-page *:before,.kitchen-page *:after{animation:none!important;transition:none!important}}
+
+/* iPad and touch layouts: comfortable targets, no hover-only interactions. */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+.flash-inner{-webkit-transform-style:preserve-3d}
+.face{-webkit-backface-visibility:hidden}
+@media(pointer:coarse){
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif}
+  .word{font-family:inherit}
+  .wrap{padding-left:max(24px,env(safe-area-inset-left));padding-right:max(24px,env(safe-area-inset-right))}
+  .toplinks a,.flip-label,.pause-label{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+  .shuffle,footer a{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+  a,button,label[for]{touch-action:manipulation}
+  .flip-label{display:flex;width:max-content;margin-left:auto;margin-right:auto}
+  .btn{min-height:52px;font-size:14px;padding:13px 23px}
+  .mode-tabs a{min-height:50px;font-size:14px;display:flex;align-items:center;justify-content:center}
+  .circle-btn{width:46px;height:46px;font-size:21px}
+  .word-chip{min-height:44px;min-width:44px;font-size:12px;display:inline-flex;align-items:center;justify-content:center;padding:10px 13px}
+  .treat-tray{grid-template-columns:repeat(10,minmax(0,1fr));gap:7px}
+  .treat-slot{min-height:50px}
+  .treat-art{width:43px;height:40px}
+  .audio-row audio{height:44px;width:250px;max-width:100%}
+  .audio-row span{font-size:10px}
+  .kitchen-intro p{font-size:14px;line-height:1.7}
+  .panel-heading h2{font-size:15px}
+  .panel-heading span,.progress-top{font-size:11px}
+  .question p{font-size:15px}
+  .question label{font-size:12px}
+  .answer-row input{font-size:22px;min-height:54px}
+  .question details summary{min-height:44px;display:flex;align-items:center;justify-content:center}
+  .shelf-label strong,.shelf-label>span{font-size:11px}
+  .kitchen-caption{font-size:11px}
+  .tip strong,.tip p{font-size:13px}
+  .mascot-card strong{font-size:14px}
+  .mascot-card p{font-size:12px}
+  .chef-badge strong{font-size:11px}
+  .chef-badge small{font-size:10px}
+  .bake-toast{font-size:13px;padding:13px}
+  .bake-toast strong{font-size:11px}
+  .card-foot{font-size:12px}
+  footer{font-size:11px;gap:12px}
+}
+@media(min-width:721px) and (max-width:1000px) and (pointer:coarse){
+  .kitchen-page .layout{grid-template-columns:1fr}
+  .sidebar{grid-template-columns:1fr 1fr}
+  .badge-card,.word-bank{grid-column:1/-1}
+  .culinary-hero{grid-template-columns:40% minmax(0,1fr);gap:18px}
+  .kitchen-intro h1{font-size:43px}
+  .kitchen-intro .eyebrow{font-size:9px}
+  .kitchen-intro p{font-size:12px}
+  .kitchen-caption{font-size:9px}
+  .chef-rank{font-size:11px;padding:10px 12px}
+  .face,.flash-inner{min-height:280px}
+  .word{font-size:76px}
+  .word.long{font-size:62px}
+  .stat-box b{font-size:28px}
+  .stat-box span{font-size:11px}
+  .chef-badges{gap:20px}
+  .chef-badge>span{width:46px;height:46px;font-size:23px}
+  .mascot.chef-emblem{width:70px;height:70px}
+}
+@media(min-width:1001px) and (max-width:1400px) and (pointer:coarse){
+  .kitchen-page .layout{grid-template-columns:minmax(0,1fr) 280px;gap:20px}
+  .culinary-hero{grid-template-columns:32% minmax(0,1fr)}
+  .kitchen-intro h1{font-size:44px}
+  .kitchen-intro p{font-size:12px}
+  .face,.flash-inner{min-height:255px}
+  .word.long{font-size:48px}
+  .chef-badge strong{font-size:9px}
+  .chef-badge small{font-size:8px}
+  .panel-heading h2{font-size:14px}
+}
+@media(max-width:600px) and (pointer:coarse){
+  .wrap{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
+  .kitchen-intro p{font-size:11px}
+  .mode-tabs a{font-size:11px}
+  .treat-tray{grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+  .shelf-label strong,.shelf-label>span{font-size:8px}
+  .kitchen-caption{font-size:8px}
+  .audio-row{flex-direction:column;gap:6px}
+  .audio-row audio{width:250px}
+  .btn{font-size:12px;padding:12px 17px}
+  .panel-heading h2{font-size:12px}
+  .panel-heading span{font-size:9px}
+  .mascot-card strong{font-size:11px}
+  .mascot-card p{font-size:10px}
+  .chef-badge strong{font-size:9px}
+  .chef-badge small{font-size:8px}
+  .progress-top{font-size:9px}
+  .card-foot{flex-wrap:wrap;gap:10px}
+  .progress-dots{max-width:110px}
+}
