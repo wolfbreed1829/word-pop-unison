@@ -1,8 +1,21 @@
-# Word Pop!
+# Word Pop! — The Word Kitchen
 
-A colorful spelling playground written in **Unison**, hosted on **Unison Cloud**. No JavaScript is shipped or required. Unison renders every page and processes game actions; CSS handles the card flip, motion, responsive layout, and celebrations. Audio uses native HTML controls.
+A colorful culinary spelling adventure written in **Unison**, hosted on **Unison Cloud**. No JavaScript is shipped or required. Unison renders every page and processes game actions; CSS handles the card flip, motion, responsive layout, and celebrations. Audio uses native HTML controls.
 
 **Play:** https://wolfbreed1829.unison-services.cloud/s/word-pop/
+
+## A kitchen that grows with you
+
+Each newly mastered word adds a cupcake, cookie, or macaron to a clickable 20-slot collection. New treats pop into place and Chef Star celebrates. The illustrated kitchen develops with your progress:
+
+| Words mastered | Kitchen reward | Chef badge |
+| --- | --- | --- |
+| 5 | Working stand mixer | Mix master |
+| 10 | Full cookie jar | Cookie captain |
+| 15 | Celebration cake | Pastry pro |
+| 20 | Candles, bunting, and a kitchen party | Head chef |
+
+Wrong answers preserve existing rewards. Refreshing or repeating a correct answer does not duplicate treats. Flashcard mastery also earns a treat. The kitchen, tray, badges, feedback, and progress are all rendered directly from the same Unison round state.
 
 ## Play modes
 
@@ -42,8 +55,9 @@ ucm run.compiled .ucm/deploy.uc
 
 ## Source map
 
-- `src/game.u` — typed deck, answer normalization, scoring, rounds, page rendering, HTTP service, local server, deployment, and seven native Unison test groups.
+- `src/game.u` — typed deck, answer normalization, scoring, rounds, interactive kitchen rendering, HTTP service, local server, deployment, and nine native Unison test groups.
 - `assets/style.css` — visual design and responsive styles. Nunito is loaded from Google Fonts with a system-font fallback.
+- `assets/kitchen.css` — gingham and wood surfaces, the illustrated kitchen, collectible treats, chef badges, and CSS reward animations.
 - `assets/audio/*.wav` — the 20 word recordings, included in the repository.
 - `scripts/audio.ps1` — optional Windows speech synthesis regeneration; not required to run the app.
 - `scripts/build.ps1` — UCM transcript orchestration. There is no Node/npm toolchain.
@@ -54,9 +68,10 @@ The spelling app deliberately sends `Content-Security-Policy: script-src 'none'`
 
 Verified with UCM 1.3.0:
 
-- All seven native Unison test groups pass: the 20-word deck, answer normalization, score rules, duplicate-answer protection, retry behavior, URL-state filtering, and HTML escaping.
+- All nine native Unison test groups pass: the 20-word deck, answer normalization, score rules, duplicate-answer protection, retry behavior, URL-state filtering, HTML escaping, kitchen milestones, and reward persistence.
 - Browser checks cover card flipping, mastery, mistakes and retries, case/space normalization, audio playback, word scramble, and an entire 20-word spelling round reaching 200 points.
-- A full round completes with browser JavaScript disabled.
-- Desktop and 390px mobile layouts were visually inspected; no horizontal overflow was found.
+- A full round completes with browser JavaScript disabled. A round including one incorrect attempt produces 20 treats, all four kitchen unlocks, and 195 points. Refreshing a correct answer preserves the treat count.
+- Keyboard card flipping, the pause-motion toggle, reduced-motion preferences, native audio, and flashcard reward animation were checked.
+- Desktop and mobile layouts were visually inspected. Widths of 320, 390, 768, and 1440 pixels have no horizontal overflow.
 
 The hosted application is on Unison Cloud. GitHub stores its source; GitHub Pages is not used because this application runs native Unison on the server.

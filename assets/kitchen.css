@@ -1,0 +1,163 @@
+
+/* The Word Kitchen: a server-rendered world, animated entirely with CSS. */
+:root { --ink:#443144; --purple:#8462c6; --pink:#ef778c; --muted:#927a86; --mint:#89cdb1; --yellow:#ffcf62; background:#fff6e7; }
+body { background-color:#fff6e7; background-image:linear-gradient(90deg,#eab3a412 50%,transparent 50%),linear-gradient(#eab3a412 50%,transparent 50%); background-size:62px 62px; }
+.topbar { background:#fffdf6; border-bottom:3px solid #f2ddbe; }
+.topbar .wrap { height:84px; }
+.brand-icon { background:#f08076; box-shadow:3px 4px 0 #f5c7b4; }
+.brand em { color:#e88075; }
+.brand small { display:block; font-size:8px; letter-spacing:2.1px; color:#b5998c; margin-top:2px; }
+.small-pill { background:#f9ead6; color:#a9825e; }
+.sr-only { position:absolute!important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+.culinary-hero { display:grid; grid-template-columns:31% minmax(0,1fr); gap:12px 20px; padding-top:28px; padding-bottom:22px; }
+.kitchen-intro { padding-bottom:2px; }
+.kitchen-intro .eyebrow { color:#a47f6b; font-size:10px; letter-spacing:1.7px; }
+.kitchen-intro .dot { background:#e58477; }
+.kitchen-intro h1 { font-size:44px; font-weight:1000; letter-spacing:-1.8px; line-height:1.02; margin-bottom:13px; }
+.kitchen-intro h1 em { color:#db7e75; }
+.kitchen-intro h1 em:after { background:#f0c354; height:5px; bottom:-5px; }
+.kitchen-intro p { font-size:13px; line-height:1.65; color:#9f827a; }
+.chef-rank { display:inline-flex; align-items:center; gap:7px; background:#fffdf4; border:1px solid #edd6b2; color:#a27c4b; border-radius:25px; padding:7px 13px; margin-top:14px; font-weight:900; font-size:11px; box-shadow:0 3px 0 #e9d4b350; }
+.chef-rank span { color:#e9b74d; font-size:16px; }
+.kitchen-window { position:relative; min-width:0; align-self:center; padding-bottom:24px; }
+.kitchen-art { display:block; width:100%; overflow:visible; border-radius:19px; filter:drop-shadow(0 7px 0 #dfbd8b25); }
+.kitchen-caption { position:absolute; bottom:0; right:4px; color:#ae8976; font-size:10px; font-weight:800; display:flex; align-items:center; gap:5px; }
+.kitchen-light { width:6px; height:6px; background:#86bf9d; border-radius:50%; }
+.kitchen-unlock.is-locked { opacity:.13; filter:grayscale(.6); }
+.kitchen-unlock.is-unlocked { opacity:1; }
+.whisk { transform-origin:286px 193px; animation:stir 2.6s ease-in-out infinite; }
+.is-unlocked .mixer-beater { transform-box:fill-box; transform-origin:center; animation:mix 1.2s ease-in-out infinite; }
+.is-unlocked .candle-flame { transform-box:fill-box; transform-origin:bottom; animation:flame .8s ease-in-out infinite; }
+.level-4 .lamp-glow { opacity:.3; }
+.level-4 .kitchen-sun { filter:drop-shadow(0 0 6px #ffce63); }
+.kitchen-celebrating .is-unlocked { animation:appliance-reveal .75s ease-out both; }
+.bake-shelf { grid-column:1/-1; background:#fffdf4; border:1px solid #efd8b6; border-bottom:5px solid #e7bc8e; border-radius:17px; padding:11px 16px 8px; box-shadow:0 5px 0 #e8d4b52b; }
+.shelf-label { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:0 3px 6px; }
+.shelf-label strong { font-size:10px; color:#b08a71; text-transform:uppercase; letter-spacing:1.3px; }
+.shelf-label>span { font-size:10px; font-weight:900; color:#ad896a; }
+.treat-tray { display:grid; grid-template-columns:repeat(20,minmax(0,1fr)); gap:5px; }
+.treat-slot { display:flex; flex-direction:column; align-items:center; justify-content:center; min-width:0; height:56px; position:relative; border-radius:10px; transition:transform .15s,background .15s; }
+.treat-slot:hover { background:#f7ead6; transform:translateY(-4px) rotate(-4deg); }
+.treat-slot:focus-visible { outline-offset:0; }
+.treat-art { width:44px; max-width:95%; height:43px; filter:drop-shadow(0 3px 0 #c7885318); }
+.treat-slot.locked .treat-art { opacity:.2; filter:grayscale(.6); }
+.treat-number { font-size:8px; font-weight:900; line-height:1; color:#c7b49e; }
+.treat-slot.baked .treat-number { color:#70a68a; }
+.treat-slot.baked { background:#fff4df; }
+.treat-slot.fresh { animation:treat-pop 1s cubic-bezier(.2,.8,.2,1) both; }
+.treat-slot.fresh:after { content:'✦'; position:absolute; top:-9px; right:0; color:#eeb741; font-size:16px; animation:sparkle 1.4s ease-out both; }
+.kitchen-page .layout { gap:24px; grid-template-columns:minmax(0,1fr) 290px; }
+.mode-tabs { background:#f4e4cd; border:1px solid #e9d2b1; margin-bottom:15px; }
+.mode-tabs a.active { background:#dc7770; box-shadow:0 4px 0 #b85e59; }
+.mode-tabs a { color:#a1887c; }
+.mode-tabs a.active { color:#fff8eb; }
+.card-stage { background-color:#f3d8ae; background-image:repeating-linear-gradient(0deg,transparent 0,transparent 63px,#d4a57828 64px,#fff0d433 66px); border:2px solid #e8c695; border-bottom:7px solid #d8ad7e; border-radius:24px; padding:18px 28px 25px; box-shadow:0 8px 0 #e9d6b93b; }
+.stage-top { color:#aa8668; font-size:10px; margin-bottom:16px; }
+.stage-top b { color:#b27c5b; }
+.face,.question { background:#fffef7; border:1px solid #f0e2c8; box-shadow:0 5px 0 #ddc8a6; }
+.face { background-image:repeating-linear-gradient(transparent 0,transparent 33px,#d9d2c316 34px,transparent 35px); }
+.face-label { color:#b19c86; }
+.face-star { color:#eab84c; }
+.flash:before { background:#e8bd8e; }
+.face,.flash-inner { min-height:260px; }
+.word { color:#594050; font-size:69px; margin-top:18px; }
+.word mark { color:#e27d77; }
+.syllable { color:#b7a08b; font-size:12px; }
+.flip-label { color:#b78a67; background:#fff4e2; border:1px solid #edd0a9; margin-top:14px; }
+.flip-label:hover { background:#fffaf0; }
+.audio-row span { color:#a88366; }
+.audio-row audio { color-scheme:light; opacity:.92; }
+.btn.yellow { background:#ffd26d; box-shadow:0 4px 0 #dcae52; }
+.btn.green { background:#92d3b6; box-shadow:0 4px 0 #69b092; }
+.btn.purple { background:#8a65bd; box-shadow:0 4px 0 #6c469f; }
+.btn { border:1px solid #00000006; border-radius:14px; }
+.card-foot { color:#b49a85; }
+.circle-btn { background:#fffdf3; border-color:#e9d6b9; color:#a17d63; }
+.progress-dots .current { background:#cf887a; }
+.progress-dots i { background:#e7d6c2; }
+.progress-dots .done { background:#87bd9c; }
+.stats-card,.word-bank,.badge-card { background:#fffdf5; border:1px solid #ead9bf; border-bottom:4px solid #e6d2b3; border-radius:20px; }
+.stats-card { padding:20px; }
+.panel-heading h2 { color:#775b57; font-size:14px; }
+.panel-heading span { font-size:10px; color:#b29b85; }
+.progress-top { color:#a58d79; }
+.progress-top b { color:#c3806e; }
+.progress-bar { background:#f1e6d5; }
+.progress-bar>div { background:linear-gradient(90deg,#f1bb8d,#da8b76); }
+.stat-box { background:#f9edd5; }
+.stat-box.pink { background:#f9e7df; }
+.mascot-card { background:#ddedce; border-color:#c9dba9; border-bottom:4px solid #c4d4a4; border-radius:20px; }
+.mascot-card p { color:#88956d; }
+.mascot-card strong { color:#6a7956; }
+.mascot { filter:drop-shadow(0 4px 0 #a7bd8433); }
+.chef-cheering .mascot { animation:chef-hop .6s ease-in-out 3; }
+.badge-card { padding:18px 16px; }
+.badge-card .panel-heading { margin-bottom:13px; }
+.chef-badges { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
+.chef-badge { text-align:center; opacity:.42; }
+.chef-badge>span { width:37px; height:37px; display:grid; place-items:center; margin:0 auto 7px; border-radius:50%; background:#e6dccb; color:#a68d73; font-size:22px; border:2px dashed #c9b695; }
+.chef-badge strong { font-size:8px; display:block; color:#9a7e65; line-height:1.3; }
+.chef-badge small { font-size:7px; color:#b39a80; display:block; margin-top:4px; }
+.chef-badge.earned { opacity:1; }
+.chef-badge.earned>span { background:#f9d483; border:2px solid #e6ba60; box-shadow:0 3px 0 #caa5694d; color:#ad7c3b; }
+.chef-badge:nth-child(2).earned>span { background:#edb2a6; border-color:#d99087; color:#aa6156; }
+.chef-badge:nth-child(3).earned>span { background:#c8b3e4; border-color:#aa92c9; color:#7d5fa6; }
+.chef-badge:nth-child(4).earned>span { background:#a7d4b1; border-color:#86b990; color:#5b916c; }
+.word-bank { padding:18px; }
+.word-chip { background:#f3ebde; color:#b1a08c; }
+.word-chip.selected { background:#f4dcd0; border-color:#ddb59c; color:#bd7d67; }
+.word-chip.done { background:#deecd7; color:#739568; }
+.bank-foot { color:#b3a18a; }
+.tip { background:#fff5d7; border:1px solid #eddbaf; }
+.tip strong { color:#a18555; }
+.tip p { color:#b09a79; }
+.shuffle { background:#fff9ee; color:#b39c82; }
+.bake-toast { display:flex; align-items:center; gap:7px; font-size:12px; font-weight:800; color:#a47b39; background:#ffe8ad; border:1px solid #e4c574; border-radius:13px; margin-bottom:13px; padding:11px 15px; animation:toast-in .4s ease-out; }
+.bake-toast>span { color:#cc9836; font-size:18px; }
+.bake-toast strong { margin-left:auto; font-size:10px; white-space:nowrap; color:#b58a4e; }
+.question { min-height:300px; }
+.question h2 { color:#8b6764; }
+.question p,.question label { color:#ac9387; }
+.answer-row input { background:#fffbef; border-color:#ebd4ad; color:#8a6261; }
+.answer-row input::placeholder { color:#c4af95; }
+.feedback { background:#eaf3d9; color:#77935a; }
+.feedback h2 { color:#728b55; }
+.feedback p { color:#91a273; }
+.feedback.retry { background:#fff0d5; color:#ab8954; }
+.feedback.retry h2 { color:#b1894e; }
+.feedback.retry p { color:#b6a078; }
+.success-word { color:#d18178; }
+.score-big { color:#d08773; }
+footer { color:#b59f86; border-top-color:#e5d2b6; }
+.pause-label { color:#b59f86; }
+.kitchen-celebrating.level-4 .chef-rank { background:#fff0be; border-color:#e9c966; color:#b18b33; }
+.kitchen-celebrating.level-4 .bake-shelf { border-color:#e2c06d; background:#fff8de; }
+.help section { background:#fffdf3; border:1px solid #edd9b9; }
+.kitchen-intro p,.kitchen-caption,.panel-heading span,.progress-top,.bank-foot,.card-foot,.question p,.question label,.tip p { color:#8b6b5c; }
+.shelf-label strong,.shelf-label>span,.stage-top,.stage-top b,.face-label,.syllable,.audio-row span { color:#93714c; }
+.word-chip { color:#92735e; }
+.word-chip.selected { color:#a95d4b; }
+.word-chip.done { color:#4b7b4e; }
+.mode-tabs a { color:#896452; }
+.mode-tabs a.active { color:white; }
+.mascot-card p { color:#687b4d; }
+.chef-badge strong { color:#795d40; }
+.chef-badge small { color:#8a6b4c; }
+.feedback p { color:#637e47; }
+.flip-label { color:#976442; }
+.bake-toast { color:#855e29; }
+.bake-toast strong { color:#805c2c; }
+footer,.pause-label { color:#967960; }
+@keyframes stir { 0%,100%{transform:rotate(-6deg)} 50%{transform:rotate(7deg)} }
+@keyframes mix { 0%,100%{transform:scaleX(1)} 50%{transform:scaleX(.45)} }
+@keyframes flame { 0%,100%{transform:rotate(-5deg) scale(.95)} 50%{transform:rotate(5deg) scale(1.05)} }
+@keyframes treat-pop { 0%{transform:translateY(-28px) rotate(-18deg) scale(.4);opacity:0} 60%{transform:translateY(-4px) rotate(9deg) scale(1.2);opacity:1} 100%{transform:translateY(0) rotate(0) scale(1)} }
+@keyframes sparkle { 0%{transform:scale(0);opacity:0} 30%{transform:scale(1.4);opacity:1} 100%{transform:translateY(-18px) scale(.5);opacity:0} }
+@keyframes chef-hop { 0%,100%{transform:translateY(0) rotate(-6deg)} 50%{transform:translateY(-10px) rotate(8deg)} }
+@keyframes appliance-reveal { 0%{opacity:.4} 100%{opacity:1} }
+@keyframes toast-in { from{transform:translateY(-8px);opacity:0} to{transform:translateY(0);opacity:1} }
+@media(min-width:1600px){.kitchen-intro h1{font-size:49px}.culinary-hero{padding-top:30px;padding-bottom:26px}.kitchen-page .layout{grid-template-columns:minmax(0,1fr) 310px}.face,.flash-inner{min-height:295px}}
+@media(max-width:1000px){.kitchen-intro h1{font-size:36px}.kitchen-intro p{font-size:11px}.kitchen-intro .eyebrow{font-size:8px}.kitchen-page .layout{grid-template-columns:minmax(0,1fr) 255px;gap:18px}.kitchen-caption{font-size:8px}.chef-rank{font-size:10px;margin-top:10px;padding:5px 10px}.culinary-hero{grid-template-columns:32% minmax(0,1fr);gap:12px}.treat-tray{gap:2px}.treat-slot{height:49px}.treat-art{height:37px}.card-stage{padding:18px 18px 23px}.bake-toast{font-size:10px}.bake-toast strong{font-size:9px}.word.long{font-size:43px}}
+@media(max-width:720px){.topbar .wrap{height:76px}.culinary-hero{grid-template-columns:1fr;padding-top:22px;gap:12px}.kitchen-intro{position:relative;padding-right:135px}.kitchen-intro h1{font-size:36px;margin-bottom:8px}.kitchen-intro p{font-size:11px}.kitchen-intro .eyebrow{font-size:8px;margin-bottom:8px}.chef-rank{position:absolute;right:0;top:51px;max-width:125px;text-align:center;font-size:10px}.kitchen-window{padding-bottom:20px}.kitchen-art{width:100%;max-height:200px}.kitchen-caption{font-size:9px;right:0;bottom:0}.bake-shelf{padding:10px 10px 8px}.shelf-label strong{font-size:8px;letter-spacing:.8px}.shelf-label>span{font-size:8px}.treat-tray{grid-template-columns:repeat(10,minmax(0,1fr));row-gap:5px}.treat-slot{height:43px}.treat-art{height:34px}.treat-number{font-size:7px}.kitchen-page .layout{grid-template-columns:1fr;gap:14px}.card-stage{padding:18px 16px 23px}.sidebar{grid-template-columns:1fr 1fr}.stats-card{padding:16px}.mascot-card{padding:15px}.badge-card{grid-column:1/-1}.chef-badge>span{height:41px;width:41px;font-size:25px}.chef-badge strong{font-size:10px}.chef-badge small{font-size:9px}.face,.flash-inner{min-height:245px}.word{font-size:58px}.word.long{font-size:44px}.stage-top{font-size:9px}.bake-toast{font-size:10px;padding:10px}.bake-toast strong{font-size:9px}.culinary-hero .bake-shelf{grid-column:auto}.badge-card{padding:17px}.word-bank{grid-column:1/-1}.question{padding:22px 16px}.help h1{font-size:34px}}
+@media(max-width:420px){.kitchen-intro{padding-right:108px}.kitchen-intro h1{font-size:33px}.chef-rank{max-width:103px;font-size:9px;top:53px;padding:6px 9px;gap:5px}.chef-rank span{font-size:12px}.kitchen-intro p{font-size:10px}.kitchen-caption{font-size:8px}.treat-art{height:29px}.treat-slot{height:38px}.shelf-label strong{font-size:7px}.shelf-label>span{font-size:7px}.stage-top{font-size:8px;letter-spacing:.6px}.word.long{font-size:38px}.card-stage{padding-left:12px;padding-right:12px}.bake-toast{flex-wrap:wrap;gap:4px;font-size:9px}.bake-toast strong{margin-left:21px}.stats-card{padding:14px}.mascot-card{padding:12px}.panel-heading h2{font-size:12px}.panel-heading span{font-size:8px}.brand small{font-size:7px;letter-spacing:1.7px}.mascot-card strong{font-size:12px}.mascot-card p{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.kitchen-page *,.kitchen-page *:before,.kitchen-page *:after{animation:none!important;transition:none!important}}

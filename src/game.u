@@ -84,19 +84,90 @@ pop.fields = cases Round mode n known practice points streak tries step ->
 
 pop.mascot : Text
 pop.mascot = """
-  <svg class="mascot" viewBox="0 0 100 110" aria-hidden="true"><path d="M50 6 Q55 5 60 28 L85 29 Q98 30 88 43 L72 62 L78 88 Q81 101 68 96 L49 84 L28 96 Q15 102 20 87 L25 63 L7 44 Q-1 33 14 31 L38 28 Z" fill="#ffce48" stroke="#eab83b" stroke-width="2"/><ellipse cx="37" cy="52" rx="4" ry="6" fill="#48374c"/><ellipse cx="61" cy="52" rx="4" ry="6" fill="#48374c"/><circle cx="28" cy="61" r="5" fill="#f8a065"/><circle cx="71" cy="61" r="5" fill="#f8a065"/><path d="M40 65 Q49 74 58 65" fill="none" stroke="#48374c" stroke-width="3" stroke-linecap="round"/><path d="M6 69 L1 77 M88 12 L94 5" stroke="#57b79a" stroke-width="3" stroke-linecap="round"/></svg>
+  <svg class="mascot" viewBox="0 -18 100 128" aria-hidden="true"><path d="M50 6 Q55 5 60 28 L85 29 Q98 30 88 43 L72 62 L78 88 Q81 101 68 96 L49 84 L28 96 Q15 102 20 87 L25 63 L7 44 Q-1 33 14 31 L38 28 Z" fill="#ffce48" stroke="#eab83b" stroke-width="2"/><ellipse cx="37" cy="52" rx="4" ry="6" fill="#48374c"/><ellipse cx="61" cy="52" rx="4" ry="6" fill="#48374c"/><circle cx="28" cy="61" r="5" fill="#f8a065"/><circle cx="71" cy="61" r="5" fill="#f8a065"/><path d="M40 65 Q49 74 58 65" fill="none" stroke="#48374c" stroke-width="3" stroke-linecap="round"/><path d="M6 69 L1 77 M88 12 L94 5" stroke="#57b79a" stroke-width="3" stroke-linecap="round"/><path d="M32 18 V7 C15 3 26 -17 39 -9 C43 -22 61 -20 66 -9 C84 -14 87 7 70 9 V18Z" fill="#fffdf5" stroke="#85b7a8" stroke-width="2"/><path d="M34 10H68M42 -5V5M58 -5V5" stroke="#c9e3d7" stroke-width="2"/><rect x="32" y="13" width="38" height="10" rx="3" fill="#fffdf5" stroke="#85b7a8" stroke-width="2"/></svg>
   """
 
 pop.header : Text
 pop.header = """
   <a class="skip" href="#play">Skip to game</a><input class="pause-input" id="pause" type="checkbox"><div class="page">
-  <header class="topbar"><div class="wrap"><a class="brand" href="?" aria-label="Word Pop home"><span class="brand-icon" aria-hidden="true">W</span><span>word<em>pop!</em></span></a><nav class="toplinks" aria-label="Main navigation"><a href="?view=help">How to play <span aria-hidden="true">↗</span></a><span class="small-pill">✦ Little words. Big wins.</span></nav></div></header>
+  <header class="topbar"><div class="wrap"><a class="brand" href="?" aria-label="Word Pop home"><span class="brand-icon" aria-hidden="true">W</span><span>word<em>pop!</em><small>THE WORD KITCHEN</small></span></a><nav class="toplinks" aria-label="Main navigation"><a href="?view=help">How to play <span aria-hidden="true">↗</span></a><span class="small-pill">✦ Made with a pinch of magic.</span></nav></div></header>
   """
 
-pop.hero : Text
-pop.hero = """
-  <section class="hero"><div><div class="eyebrow"><span class="dot"></span> THE SPELLING PLAYGROUND</div><h1>Small words.<br>Big <em>brain energy.</em></h1><p>A little practice. A lot of possibilities. Let's make words stick!</p></div><div class="hero-doodle" aria-hidden="true"><span class="tile">a</span><span class="tile">b</span><span class="tile">c</span><span class="doodle-spark">✦</span><span class="doodle-spark bottom">✳</span></div></section>
+pop.baked : Round -> Nat
+pop.baked = cases Round _ _ known _ _ _ _ _ -> List.size known
+
+pop.current : Round -> Nat
+pop.current = cases Round _ n _ _ _ _ _ _ -> n
+
+pop.level : Nat -> Nat
+pop.level count = Nat.min 4 (Nat.div count 5)
+
+pop.rank : Nat -> Text
+pop.rank count = List.at (pop.level count) ["Little sous-chef", "Mix master", "Cookie captain", "Pastry pro", "Head chef!"] |> Optional.getOrElse "Little sous-chef"
+
+pop.unlock : Nat -> Text
+pop.unlock count =
+  if count < 5 then pop.number (5 - count) ++ " more to switch on your mixer"
+  else if count < 10 then pop.number (10 - count) ++ " more to fill your cookie jar"
+  else if count < 15 then pop.number (15 - count) ++ " more to bake a celebration cake"
+  else if count < 20 then pop.number (20 - count) ++ " more to throw a kitchen party"
+  else "Your kitchen is ready for the grand feast!"
+
+pop.treat : Nat -> Text
+pop.treat i =
+  drawing = if Nat.mod i 3 == 0 then "<path d='M13 32H47L42 55H18Z' fill='#e6ad72'/><path d='M22 36L24 50M30 36V50M38 36L36 50' stroke='#c68558' stroke-width='2'/><path d='M10 30Q7 20 19 19Q17 8 29 9Q36 1 41 14Q56 16 50 30Z' fill='#ff88a3' stroke='#e56785' stroke-width='1.5'/><circle cx='29' cy='7' r='4' fill='#e84962'/><path d='M18 24l3 -3M29 18l3 2M41 24l3 -3' stroke='#fff4bf' stroke-width='3' stroke-linecap='round'/>"
+    else if Nat.mod i 3 == 1 then "<circle cx='30' cy='30' r='24' fill='#e9ac60' stroke='#cb8740' stroke-width='2'/><circle cx='21' cy='19' r='4' fill='#805144'/><circle cx='39' cy='22' r='3' fill='#805144'/><circle cx='28' cy='36' r='4' fill='#805144'/><circle cx='43' cy='38' r='3' fill='#805144'/><circle cx='17' cy='38' r='2' fill='#805144'/><circle cx='28' cy='10' r='2' fill='#ffe1a8'/><circle cx='36' cy='46' r='2' fill='#ffe1a8'/>"
+    else "<ellipse cx='30' cy='37' rx='25' ry='16' fill='#a18ae5'/><rect x='6' y='25' width='48' height='13' rx='6' fill='#fff1cb'/><ellipse cx='30' cy='25' rx='25' ry='16' fill='#bca6f7' stroke='#9880d5' stroke-width='1.5'/><path d='M13 21Q18 15 26 16' fill='none' stroke='#e3d4ff' stroke-width='3' stroke-linecap='round'/>"
+  "<svg class='treat-art' viewBox='0 0 60 62' aria-hidden='true'>" ++ drawing ++ "</svg>"
+
+pop.tray : Round -> Boolean -> Nat -> Text
+pop.tray round celebrate freshIndex = match round with Round _ _ known _ _ _ _ _ ->
+  item i =
+    earned = pop.has (pop.number i) known
+    classes = "treat-slot" ++ (if earned then " baked" else " locked") ++ (if celebrate && earned && i == freshIndex then " fresh" else "")
+    label = "<span class='sr-only'>Word " ++ pop.number (i + 1) ++ (if earned then ", treat baked" else ", not baked yet") ++ "</span>" ++ pop.treat i ++ "<span class='treat-number'>" ++ (if earned then "✓" else pop.number (i + 1)) ++ "</span>"
+    pop.link classes (pop.url (pop.withIndex i round)) label
+  "<div class='bake-shelf'><div class='shelf-label'><strong>Your fresh-baked collection</strong><span>" ++ pop.number (List.size known) ++ " of 20 treats baked</span></div><nav class='treat-tray' aria-label='Your baked treats'>" ++ Text.join "" (List.map item (List.range 0 20)) ++ "</nav></div>"
+
+pop.kitchen : Nat -> Text
+pop.kitchen count =
+  unlock classes threshold markup = "<g class='kitchen-unlock " ++ classes ++ (if count >= threshold then " is-unlocked" else " is-locked") ++ "'>" ++ markup ++ "</g>"
+  base = """
+  <svg class="kitchen-art" viewBox="0 0 900 300" role="img" aria-labelledby="kitchen-art-title"><title id="kitchen-art-title">A colorful baking kitchen that fills with equipment and treats as you master words</title><defs><pattern id="kitchen-tiles" width="45" height="38" patternUnits="userSpaceOnUse"><rect width="45" height="38" fill="#fff0d9"/><path d="M0 38V0H45" fill="none" stroke="#f2d6b7" stroke-width="2"/></pattern><linearGradient id="window-sky" x2="0" y2="1"><stop stop-color="#a9deef"/><stop offset="1" stop-color="#e5f9ec"/></linearGradient></defs>
+  <rect x="0" y="10" width="900" height="286" rx="22" fill="url(#kitchen-tiles)"/>
+  <path d="M0 263H900V300H0Z" fill="#9bd8be"/><path d="M20 274H275V299M294 274H580V299M600 274H880V299" fill="none" stroke="#70b99e" stroke-width="3"/><path d="M128 282h28M422 282h28M727 282h28" stroke="#fff2cb" stroke-width="5" stroke-linecap="round"/>
+  <rect x="24" y="39" width="191" height="136" rx="13" fill="#e6a487" opacity=".3"/><rect x="17" y="32" width="192" height="136" rx="12" fill="#f58378" stroke="#d9655e" stroke-width="3"/><path d="M113 35V164" stroke="#d9655e" stroke-width="3"/><rect x="29" y="45" width="71" height="106" rx="6" fill="#ffa498"/><rect x="126" y="45" width="70" height="106" rx="6" fill="#ffa498"/><circle cx="88" cy="100" r="4" fill="#fff0c5"/><circle cx="138" cy="100" r="4" fill="#fff0c5"/>
+  <path d="M286 1V59" stroke="#8e6b72" stroke-width="4"/><path d="M245 77Q248 40 286 40Q324 40 328 77Z" fill="#ffc64b" stroke="#e6a632" stroke-width="2"/><ellipse cx="286" cy="77" rx="41" ry="8" fill="#ffe8a3"/><path class="lamp-glow" d="M257 82L211 221H360L315 82Z" fill="#ffd955" opacity=".12"/>
+  <rect x="359" y="29" width="177" height="139" rx="35" fill="#86c7be"/><rect x="370" y="40" width="155" height="117" rx="26" fill="url(#window-sky)"/><circle class="kitchen-sun" cx="487" cy="73" r="19" fill="#ffcb50"/><path d="M382 112Q389 96 404 105Q421 86 437 107Q455 106 458 119H382Z" fill="#fffdf2"/><path d="M380 145Q427 121 451 144Q493 124 525 144V157H380Z" fill="#9bd6b1"/><path d="M449 40V157M370 98H525" stroke="#fff9e6" stroke-width="7"/><rect x="351" y="158" width="193" height="14" rx="5" fill="#e4ab73"/>
+  <rect x="596" y="51" width="231" height="11" rx="5" fill="#a47873"/><path d="M620 62v20M676 62v20M733 62v20M790 62v20" stroke="#a47873" stroke-width="4" fill="none"/>
+  <g transform="rotate(-8 620 105)"><rect x="614" y="77" width="12" height="37" rx="6" fill="#e9b15c"/><ellipse cx="620" cy="132" rx="23" ry="29" fill="#9976d7" stroke="#7656b4" stroke-width="3"/><ellipse cx="620" cy="132" rx="14" ry="19" fill="#b699ec"/></g>
+  <g transform="rotate(8 676 110)"><path d="M676 79V151" stroke="#6bb5a1" stroke-width="9" stroke-linecap="round"/><ellipse cx="676" cy="95" rx="14" ry="20" fill="#82cfb6"/><path d="M670 86V101M677 84V102M684 86V101" stroke="#e7f5d8" stroke-width="2" stroke-linecap="round"/></g>
+  <g><path d="M733 80V112" stroke="#e49c77" stroke-width="10" stroke-linecap="round"/><ellipse cx="733" cy="131" rx="15" ry="25" fill="none" stroke="#9e91b3" stroke-width="2"/><ellipse cx="733" cy="131" rx="7" ry="25" fill="none" stroke="#9e91b3" stroke-width="2"/></g>
+  <g transform="rotate(10 790 110)"><path d="M790 79V110" stroke="#c99463" stroke-width="9" stroke-linecap="round"/><ellipse cx="790" cy="132" rx="18" ry="26" fill="#dfb47b"/><ellipse cx="790" cy="132" rx="11" ry="18" fill="#cfa06a"/></g>
+  <rect x="4" y="246" width="892" height="20" rx="9" fill="#c78c5c"/><rect x="0" y="239" width="900" height="16" rx="7" fill="#f0bf87"/><path d="M12 243H886" stroke="#ffe1ae" stroke-width="3"/>
+  <g transform="translate(35 187)"><rect x="0" y="0" width="60" height="51" rx="7" fill="#fdf1d3" stroke="#d9bd8e" stroke-width="2"/><rect x="-3" y="-9" width="66" height="14" rx="4" fill="#83c4a9"/><rect x="9" y="13" width="42" height="24" rx="5" fill="#fffdf5"/><text x="30" y="29" text-anchor="middle" fill="#a28262" font-family="Nunito,sans-serif" font-size="12" font-weight="900">FLOUR</text></g>
+  <g transform="translate(112 209) rotate(-12 50 12)"><rect x="-10" y="8" width="116" height="10" rx="5" fill="#b77f57"/><rect x="9" y="0" width="78" height="26" rx="10" fill="#e5b47e"/><path d="M20 4V22M76 4V22" stroke="#f2cc97" stroke-width="2"/></g>
+  <g transform="translate(238 190)"><ellipse cx="45" cy="42" rx="58" ry="8" fill="#c79468" opacity=".22"/><path d="M0 0H90Q85 49 45 49Q5 49 0 0" fill="#a58ae2" stroke="#8668c4" stroke-width="2"/><ellipse cx="45" cy="0" rx="46" ry="9" fill="#c7b3f0"/><ellipse cx="45" cy="0" rx="36" ry="6" fill="#f4deb6"/><path class="whisk" d="M40 -5L67 -53" stroke="#8d758d" stroke-width="5" stroke-linecap="round"/><path d="M17 16Q20 30 31 34" fill="none" stroke="#d3c0f6" stroke-width="4" stroke-linecap="round"/></g>
+  <g transform="translate(835 202)"><path d="M-17 0H17L12 35H-12Z" fill="#f2a081"/><path d="M0 0V-39M0 -15Q-32 -47 -16 -48Q1 -47 0 -15M0 -8Q34 -35 24 -40Q5 -41 0 -8" stroke="#6baf80" stroke-width="4" fill="#8dcb91" stroke-linecap="round"/></g>
   """
+  mixer = """
+  <g transform="translate(369 192)"><path d="M0 45V34H16V-17Q18 -43 47 -43H64Q79 -43 79 -25V-10H41V33H85V45Z" fill="#62bea8" stroke="#439e8c" stroke-width="2"/><rect x="34" y="-35" width="31" height="8" rx="4" fill="#9ee2ca"/><path d="M68 -10V6" stroke="#8c8299" stroke-width="5"/><path class="mixer-beater" d="M61 6Q54 30 68 30Q82 30 75 6Z" fill="none" stroke="#8c8299" stroke-width="3"/><path d="M42 9H96Q90 38 69 38Q47 38 42 9" fill="#e4dbeb" stroke="#b3a6c4" stroke-width="2"/><ellipse cx="69" cy="9" rx="27" ry="5" fill="#fdf5df"/><circle cx="24" cy="-15" r="6" fill="#fff0ba"/></g>
+  """
+  cookies = """
+  <g transform="translate(496 175)"><rect width="67" height="64" rx="13" fill="#d5eeee" fill-opacity=".8" stroke="#96c7bd" stroke-width="2"/><circle cx="23" cy="39" r="16" fill="#deb06d"/><circle cx="43" cy="44" r="16" fill="#efc283"/><circle cx="33" cy="22" r="15" fill="#e9b16d"/><path d="M25 20h2M38 28h2M32 13h2M17 37h2M47 48h2M39 39h2M28 49h2" stroke="#966048" stroke-width="4" stroke-linecap="round"/><rect x="-4" y="-10" width="75" height="15" rx="5" fill="#f3a5b1"/><path d="M8 12V48" stroke="#fffdf0" stroke-width="5" stroke-linecap="round" opacity=".7"/></g>
+  """
+  cake = """
+  <g transform="translate(609 181)"><path d="M-9 51H98M46 51V60M26 60H66" fill="none" stroke="#aa85ca" stroke-width="5" stroke-linecap="round"/><rect x="0" y="6" width="89" height="43" rx="8" fill="#f7b573"/><path d="M1 28H88" stroke="#ffedce" stroke-width="8"/><path d="M0 9Q1 -5 14 -5H75Q90 -5 89 9V20Q81 31 74 19Q65 8 59 20Q51 33 43 19Q34 8 27 20Q18 31 11 20Q2 27 0 9" fill="#fc91aa"/><circle cx="18" cy="-4" r="5" fill="#e55777"/><circle cx="44" cy="-6" r="5" fill="#e55777"/><circle cx="70" cy="-4" r="5" fill="#e55777"/></g>
+  """
+  party = """
+  <g class="party-flags"><path d="M17 14Q450 81 880 14" fill="none" stroke="#ac7b6b" stroke-width="3"/><path d="M185 35L210 73L235 43Z" fill="#a48be1"/><path d="M279 50L304 90L329 56Z" fill="#f5869b"/><path d="M380 62L405 101L430 64Z" fill="#ffcc54"/><path d="M480 64L505 101L530 62Z" fill="#74cbb3"/><path d="M580 56L605 90L630 50Z" fill="#a48be1"/><path d="M679 43L704 73L729 35Z" fill="#f5869b"/></g><g class="cake-crown" transform="translate(629 156)"><rect width="49" height="25" rx="6" fill="#c1a5ee"/><path d="M0 6Q7 16 14 6Q24 17 33 6Q42 16 49 6V0H0Z" fill="#fff0cf"/><path d="M24 0V-16" stroke="#f6ab67" stroke-width="4"/><path class="candle-flame" d="M24 -17Q12 -23 24 -34Q35 -23 24 -17" fill="#ffbf37"/></g><path d="M755 180l5 -11 5 11 12 4 -12 5 -5 11 -5 -11 -12 -5Z" fill="#ffcc54"/>
+  """
+  base ++ unlock "mixer" 5 mixer ++ unlock "cookie-jar" 10 cookies ++ unlock "cake" 15 cake ++ unlock "party" 20 party ++ "</svg>"
+
+pop.hero : Round -> Boolean -> Nat -> Text
+pop.hero round celebrate freshIndex =
+  count = pop.baked round
+  "<section class='hero culinary-hero level-" ++ pop.number (pop.level count) ++ (if celebrate then " kitchen-celebrating" else "") ++ "' aria-label='Your word kitchen'><div class='kitchen-intro'><div class='eyebrow'><span class='dot'></span> SPELLING, SERVED FRESH</div><h1>A recipe for<br><em>word magic.</em></h1><p>Every word you master adds a treat.<br>Let's cook up something wonderful!</p><span class='chef-rank'><span aria-hidden='true'>✦</span> " ++ pop.rank count ++ "</span></div><div class='kitchen-window'>" ++ pop.kitchen count ++ "<div class='kitchen-caption'><span class='kitchen-light'></span> " ++ pop.unlock count ++ "</div></div>" ++ pop.tray round celebrate freshIndex ++ "</section>"
 
 pop.tabs : Round -> Text
 pop.tabs = cases Round mode n known practice points streak tries step ->
@@ -112,7 +183,7 @@ pop.flash round = match round with Round _ n _ _ _ _ _ _ ->
   word = pop.word card
   marked = Text.replaceAll (pop.focus card) ("<mark>" ++ pop.focus card ++ "</mark>") word
   sentence = Text.replaceAll word ("<strong>" ++ word ++ "</strong>") (pop.sentence card)
-  "<div class='flash'><input class='flip-check' id='flip' type='checkbox' aria-label='Flip the flashcard'><div class='flash-inner'><div class='face front'><span class='face-label'>LOOK. SAY. REMEMBER.</span><span class='face-star' aria-hidden='true'>✦</span><div class='word" ++ (if Text.size word > 7 then " long" else "") ++ "'>" ++ marked ++ "</div><div class='syllable'>" ++ pop.number (Text.size word) ++ " letters · one new superpower</div></div><div class='face back'><span class='face-label'>LET'S MAKE IT STICK</span><span class='face-star' aria-hidden='true'>✦</span><p class='meaning'>" ++ pop.meaning card ++ "</p><p class='example'>“" ++ sentence ++ "”</p></div></div><label class='flip-label' for='flip'><span aria-hidden='true'>⤾</span> Tap to flip the card</label></div>" ++ pop.audio n ++ "<div class='actions'>" ++ pop.link "btn yellow" (pop.url round ++ "&action=practice") "↻ Practice again" ++ pop.link "btn green" (pop.url round ++ "&action=known") "✓ Got it!" ++ "</div>"
+  "<div class='flash'><input class='flip-check' id='flip' type='checkbox' aria-label='Flip the flashcard'><div class='flash-inner'><div class='face front'><span class='face-label'>TODAY'S SECRET INGREDIENT</span><span class='face-star' aria-hidden='true'>✦</span><div class='word" ++ (if Text.size word > 7 then " long" else "") ++ "'>" ++ marked ++ "</div><div class='syllable'>" ++ pop.number (Text.size word) ++ " letters · one tasty little challenge</div></div><div class='face back'><span class='face-label'>LET'S MAKE IT STICK</span><span class='face-star' aria-hidden='true'>✦</span><p class='meaning'>" ++ pop.meaning card ++ "</p><p class='example'>“" ++ sentence ++ "”</p></div></div><label class='flip-label' for='flip'><span aria-hidden='true'>⤾</span> Tap to flip the card</label></div>" ++ pop.audio n ++ "<div class='actions'>" ++ pop.link "btn yellow" (pop.url round ++ "&action=practice") "↻ Practice again" ++ pop.link "btn green" (pop.url round ++ "&action=known") "✓ Got it!" ++ "</div>"
 
 pop.scramble : Text -> Text
 pop.scramble word =
@@ -143,20 +214,28 @@ pop.bank = cases Round mode n known practice points _ _ step ->
     pop.link classes (pop.url (Round mode i known practice points 0 0 step)) label
   "<section class='word-bank'><div class='panel-heading'><h2>Your word collection</h2><span>20 words</span></div><div class='word-grid'>" ++ Text.join "" (List.map chip (List.range 0 20)) ++ "</div><p class='bank-foot'><i></i> Green means you've got it!</p></section>"
 
-pop.sidebar : Round -> Text
-pop.sidebar round = pop.progress round ++ "<div class='mascot-card'>" ++ pop.mascot ++ "<div><strong>A little better<br>with every letter.</strong><p>Mistakes are just your brain growing. Keep going!</p></div></div>" ++ pop.bank round
+pop.sidebar : Round -> Boolean -> Boolean -> Text
+pop.sidebar round celebrate retry =
+  title = if retry then "Let's try that recipe again." else if celebrate then "Fresh out of the oven!" else "A pinch of practice.<br>A spoonful of magic."
+  message = if retry then "Every great chef experiments. Listen again, then give it a go!" else if celebrate then "You earned a new treat. Look at your kitchen grow!" else pop.unlock (pop.baked round) ++ "."
+  pop.progress round ++ "<div class='mascot-card" ++ (if celebrate then " chef-cheering" else "") ++ "'>" ++ pop.mascot ++ "<div><strong>" ++ title ++ "</strong><p>" ++ message ++ "</p></div></div>" ++ pop.badges (pop.baked round) ++ pop.bank round
+
+pop.badges : Nat -> Text
+pop.badges count =
+  badge threshold symbol name = "<div class='chef-badge" ++ (if count >= threshold then " earned" else "") ++ "'><span aria-hidden='true'>" ++ symbol ++ "</span><strong>" ++ name ++ "</strong><small>" ++ (if count >= threshold then "Unlocked!" else pop.number threshold ++ " words") ++ "</small></div>"
+  "<section class='badge-card' aria-label='Chef achievements'><div class='panel-heading'><h2>Your chef's journey</h2><span>4 little wins</span></div><div class='chef-badges'>" ++ badge 5 "✿" "Mix master" ++ badge 10 "◉" "Cookie captain" ++ badge 15 "♜" "Pastry pro" ++ badge 20 "★" "Head chef" ++ "</div></section>"
 
 pop.footer : Text
 pop.footer = """
-  <footer><span class="mini-brand">MADE FOR CURIOUS MINDS ✦</span><span>20 words · Endless possibility</span><label class="pause-label" for="pause">Pause motion</label><a href="https://github.com/wolfbreed1829/word-pop-unison" target="_blank" rel="noopener">Made with Unison ↗</a></footer>
+  <footer><span class="mini-brand">BAKED WITH CURIOSITY ✦</span><span>20 words · A kitchen full of possibility</span><label class="pause-label" for="pause">Pause motion</label><a href="https://github.com/wolfbreed1829/word-pop-unison" target="_blank" rel="noopener">Made with Unison ↗</a></footer>
   """
 
 pop.shell : Text -> Text -> Text
-pop.shell css body = "<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><meta name='theme-color' content='#7350e6'><meta name='description' content='A colorful spelling playground. Flip flashcards, hear words, solve scrambles, and celebrate every little win.'><title>Word Pop! — A little practice. A lot of possibility.</title><link rel='icon' href='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2218%22 fill=%22%237350e6%22/%3E%3Ctext x=%2210%22 y=%2248%22 font-size=%2246%22 font-family=%22Arial%22 font-weight=%22bold%22 fill=%22white%22%3EW%3C/text%3E%3C/svg%3E'><style>" ++ css ++ "</style></head><body>" ++ pop.header ++ body ++ "</div></body></html>"
+pop.shell css body = "<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><meta name='theme-color' content='#7350e6'><meta name='description' content='Cook up word magic in a colorful kitchen. Every mastered word earns a treat. Flashcards, spelling, and word scrambles, entirely in Unison.'><title>Word Pop! — The Word Kitchen</title><link rel='icon' href='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2218%22 fill=%22%237350e6%22/%3E%3Ctext x=%2210%22 y=%2248%22 font-size=%2246%22 font-family=%22Arial%22 font-weight=%22bold%22 fill=%22white%22%3EW%3C/text%3E%3C/svg%3E'><style>" ++ css ++ "</style></head><body>" ++ pop.header ++ body ++ "</div></body></html>"
 
 pop.help : Text
 pop.help = """
-  <main class="help" id="play"><div class="eyebrow">LET'S PLAY WITH WORDS</div><h1>Little steps. Big wins.</h1><section><h2>▣ Flip a flashcard</h2><p>Read the word out loud, play its recording, and tap the flip button to see what it means. Choose <strong>Got it!</strong> to mark it mastered, or <strong>Practice again</strong> to put it on your practice list.</p></section><section><h2>✎ Give spelling a go</h2><p>Choose <strong>Spell it</strong>, play the word, and type what you hear. A correct first try earns 10 happy points. A correct answer after another try earns 5. A mistake resets your streak, but you can always try again. Each word earns points once per round.</p></section><section><h2>⇄ Untangle a word</h2><p>Choose <strong>Word scramble</strong> and use all the colorful letters to figure out the word. The meaning, recording, and hint can help. Your progress travels with the game links in this tab. Start a fresh round from the home logo; no account is needed.</p></section><section><h2>☀ Make yourself comfortable</h2><p>Everything works with a keyboard: Tab to a control, then Enter or Space. Use your browser zoom for bigger letters. The site follows your reduced-motion setting, and the footer has a pause-motion toggle. Audio only plays when you press play.</p></section><a class="btn purple" href="?">Let's play ↗</a></main>
+  <main class="help" id="play"><div class="eyebrow">WELCOME TO THE WORD KITCHEN</div><h1>A recipe for little wins.</h1><section><h2>✦ Build your word kitchen</h2><p>Each newly mastered word bakes a cupcake, cookie, or macaron for your tray. Master 5 words to unlock a mixer, 10 for a cookie jar, 15 for a cake, and all 20 for a kitchen party! Your chef badge grows along with your kitchen. Choosing <strong>Got it!</strong> on a flashcard also adds a treat and earns 5 points. Each word adds one treat per round, so retries and repeated answers never double-count.</p></section><section><h2>▣ Flip a flashcard</h2><p>Read the word out loud, play its recording, and tap the flip button to see what it means. Choose <strong>Got it!</strong> to mark it mastered, or <strong>Practice again</strong> to put it on your practice list.</p></section><section><h2>✎ Give spelling a go</h2><p>Choose <strong>Spell it</strong>, play the word, and type what you hear. A correct first try earns 10 happy points. A correct answer after another try earns 5. A mistake resets your streak, but you can always try again. Each word earns points once per round.</p></section><section><h2>⇄ Untangle a word</h2><p>Choose <strong>Word scramble</strong> and use all the colorful letters to figure out the word. The meaning, recording, and hint can help. Your progress travels with the game links in this tab. Start a fresh round from the home logo; no account is needed.</p></section><section><h2>☀ Make yourself comfortable</h2><p>Everything works with a keyboard: Tab to a control, then Enter or Space. Use your browser zoom for bigger letters. The site follows your reduced-motion setting, and the footer has a pause-motion toggle. Audio only plays when you press play.</p></section><a class="btn purple" href="?">Let's play ↗</a></main>
   """
 
 pop.next : Round -> Round
@@ -187,7 +266,7 @@ pop.finished = cases Round mode _ known practice points _ _ _ ->
   restart = Round mode 0 [] [] 0 0 0 0
   practiceIndex = List.head practice |> Optional.flatMap Nat.fromText |> Optional.getOrElse 0
   practiceLink = if List.size practice > 0 then pop.link "btn yellow" (pop.url (Round mode practiceIndex known practice points 0 0 0)) "Revisit a tricky word ↗" else ""
-  "<div class='finished'>" ++ pop.confetti ++ pop.mascot ++ "<h2>Look at you grow!</h2><p>You made it through your round.<br>Every word you practiced is a little win.</p><div class='score-big'>" ++ pop.number points ++ "<span style='font-size:25px'> ★</span></div><p>" ++ pop.number (List.size known) ++ " words mastered · " ++ pop.number (List.size practice) ++ " to practice</p><div class='actions'>" ++ practiceLink ++ pop.link "btn purple" (pop.url restart) "Play a fresh round ↗" ++ "</div></div>"
+  "<div class='finished'>" ++ pop.confetti ++ pop.mascot ++ "<h2>Your batch is ready!</h2><p>You cooked up a whole round of word magic.<br>Every word is another ingredient for success.</p><div class='score-big'>" ++ pop.number points ++ "<span style='font-size:25px'> ★</span></div><p>" ++ pop.number (List.size known) ++ " words mastered · " ++ pop.number (List.size practice) ++ " to practice</p><div class='actions'>" ++ practiceLink ++ pop.link "btn purple" (pop.url restart) "Play a fresh round ↗" ++ "</div></div>"
 
 pop.content : Round -> Text -> Text -> Text
 pop.content round answer action = match round with Round mode n known practice points streak tries step ->
@@ -205,11 +284,13 @@ pop.page css initial answer action =
   afterAction = if action == "known" then pop.next (pop.master false initial) else if action == "practice" then pop.next (pop.practiceAgain initial) else initial
   match afterAction with Round mode n _ _ _ _ _ step ->
     displayRound = if answer == "" || mode == "flash" then afterAction else if pop.correct (pop.card n) answer then pop.master true afterAction else pop.practiceAgain afterAction
-    stageTitle = if mode == "flash" then "A LITTLE FLIP. A LITTLE LEARNING." else if mode == "spell" then "READY, SET, SPELL!" else "A LITTLE LETTER MAGIC."
+    freshTreat = pop.baked displayRound > pop.baked initial
+    retry = not (answer == "") && not (mode == "flash") && not (pop.correct (pop.card n) answer)
+    stageTitle = if mode == "flash" then "TODAY'S RECIPE: A LITTLE PRACTICE." else if mode == "spell" then "READY, SET, BAKE A WORD!" else "MIX UP A LITTLE LETTER MAGIC."
     tip = if mode == "flash" then "Say it. Cover it. Spell it!" else if mode == "spell" then "Listen for the little sounds." else "Look for letters that like to stick together."
     tipBody = if mode == "flash" then "Say the word out loud, flip the card, then try spelling it from memory." else if mode == "spell" then "Play the word again. Break it into sounds. Put those sounds back together." else "Try finding ar, or, and ore. These letter teams can help you find the word."
     shuffle = pop.withIndex (Nat.mod (n + 7) 20) afterAction
-    body = "<main class='wrap' id='play'>" ++ pop.hero ++ "<div class='layout'><section class='play-area' aria-label='Spelling game'>" ++ pop.tabs displayRound ++ "<div class='card-stage'><div class='stage-top'><span>" ++ stageTitle ++ "</span><b>" ++ pop.number (Nat.min 20 (step + 1)) ++ " / 20</b></div>" ++ pop.content afterAction answer action ++ "</div>" ++ pop.bottom displayRound ++ "<div class='tip'><div class='tip-icon' aria-hidden='true'>☀</div><div><strong>" ++ tip ++ "</strong><p>" ++ tipBody ++ "</p></div></div><div class='motivation'>" ++ pop.link "shuffle" (pop.url shuffle) "⇄ Surprise me with another word" ++ "</div></section><aside class='sidebar' aria-label='Your progress and words'>" ++ pop.sidebar displayRound ++ "</aside></div>" ++ pop.footer ++ "</main>"
+    body = "<main class='wrap kitchen-page" ++ (if freshTreat then " new-treat" else "") ++ "' id='play' data-baked='" ++ pop.number (pop.baked displayRound) ++ "'>" ++ pop.hero displayRound freshTreat (pop.current initial) ++ "<div class='layout'><section class='play-area' aria-label='Spelling game'>" ++ pop.tabs displayRound ++ (if freshTreat then "<div class='bake-toast' role='status'><span aria-hidden='true'>✦</span> A fresh treat just landed in your kitchen! <strong>" ++ pop.number (pop.baked displayRound) ++ " / 20 baked</strong></div>" else "") ++ "<div class='card-stage'><div class='stage-top'><span>" ++ stageTitle ++ "</span><b>" ++ pop.number (Nat.min 20 (step + 1)) ++ " / 20</b></div>" ++ pop.content afterAction answer action ++ "</div>" ++ pop.bottom displayRound ++ "<div class='tip'><div class='tip-icon' aria-hidden='true'>☀</div><div><strong>" ++ tip ++ "</strong><p>" ++ tipBody ++ "</p></div></div><div class='motivation'>" ++ pop.link "shuffle" (pop.url shuffle) "⇄ Surprise me with another word" ++ "</div></section><aside class='sidebar' aria-label='Your progress and words'>" ++ pop.sidebar displayRound freshTreat retry ++ "</aside></div>" ++ pop.footer ++ "</main>"
     pop.shell css body
 
 pop.param : Text -> HttpRequest -> Text
@@ -262,8 +343,9 @@ pop.service css clips request =
 pop.assets : '{IO, Exception} (Text, [Bytes])
 pop.assets = do
   css = lib.unison_base_7_20_0.IO.FilePath.readFileUtf8 (FilePath "assets/style.css")
+  kitchenCss = lib.unison_base_7_20_0.IO.FilePath.readFileUtf8 (FilePath "assets/kitchen.css")
   clips = List.map (n -> lib.unison_base_7_20_0.IO.FilePath.readFile (FilePath ("assets/audio/" ++ pop.number n ++ ".wav"))) (List.range 0 20)
-  (css, clips)
+  (css ++ kitchenCss, clips)
 
 pop.local : '{IO, Exception} ()
 pop.local = do
@@ -295,3 +377,8 @@ test> pop.tests.master =
 test> pop.tests.retry = check (pop.url (pop.master true (pop.practiceAgain (Round "spell" 0 [] [] 0 4 0 0))) == "?m=spell&n=0&k=0&p=&s=5&r=1&t=1&step=0")
 test> pop.tests.indexes = check (Text.join "," (pop.indexes "3,3,99,<script>,1") == "1,3")
 test> pop.tests.escape = check (pop.escape "<script>" == "&lt;script&gt;")
+test> pop.tests.kitchenLevels = check (pop.level 0 == 0 && pop.level 4 == 0 && pop.level 5 == 1 && pop.level 10 == 2 && pop.level 15 == 3 && pop.level 20 == 4)
+test> pop.tests.kitchenRewards =
+  initial = Round "spell" 0 [] [] 0 0 0 0
+  earned = pop.master true initial
+  check (pop.baked (pop.practiceAgain initial) == 0 && pop.baked earned == 1 && pop.baked (pop.master true earned) == 1 && pop.baked (pop.next earned) == 1)
