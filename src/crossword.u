@@ -1,0 +1,202 @@
+-- One connected, fixed crossword. Coordinates are zero-based; clue numbers
+-- follow reading order. The board is 210 ASCII letters/dots carried in the URL.
+structural type CrossEntry = CrossEntry Nat Nat Nat Nat Boolean
+-- deck index, clue number, row, column, across
+
+cross.entries : [CrossEntry]
+cross.entries =
+  [ CrossEntry 0 11 9 1 true
+  , CrossEntry 1 17 12 9 true
+  , CrossEntry 2 12 9 7 false
+  , CrossEntry 3 2 2 3 true
+  , CrossEntry 4 7 5 7 true
+  , CrossEntry 5 11 9 1 false
+  , CrossEntry 6 3 4 3 false
+  , CrossEntry 7 16 11 11 false
+  , CrossEntry 8 15 11 6 true
+  , CrossEntry 9 8 5 13 false
+  , CrossEntry 10 14 11 0 true
+  , CrossEntry 11 4 4 7 false
+  , CrossEntry 12 6 5 2 true
+  , CrossEntry 13 18 13 1 true
+  , CrossEntry 14 1 0 5 false
+  , CrossEntry 15 10 7 4 false
+  , CrossEntry 16 13 10 9 false
+  , CrossEntry 17 1 0 5 true
+  , CrossEntry 18 9 7 0 true
+  , CrossEntry 19 5 4 10 false
+  ]
+
+cross.order : [Nat]
+cross.order = [17,14,3,6,11,19,12,4,9,18,15,0,5,2,16,10,8,7,1,13]
+
+cross.entry : Nat -> CrossEntry
+cross.entry i = List.at (Nat.mod i 20) cross.entries |> Optional.getOrElse (CrossEntry 0 11 9 1 true)
+cross.index : CrossEntry -> Nat
+cross.index = cases CrossEntry i _ _ _ _ -> i
+cross.num : CrossEntry -> Nat
+cross.num = cases CrossEntry _ n _ _ _ -> n
+cross.across : CrossEntry -> Boolean
+cross.across = cases CrossEntry _ _ _ _ across -> across
+cross.direction : CrossEntry -> Text
+cross.direction entry = if cross.across entry then "Across" else "Down"
+cross.label : CrossEntry -> Text
+cross.label entry = pop.number (cross.num entry) ++ " " ++ cross.direction entry
+
+cross.position : CrossEntry -> Nat -> Nat
+cross.position entry offset = match entry with CrossEntry _ _ row col across -> row * 14 + col + offset * (if across then 1 else 14)
+cross.cells : CrossEntry -> [Nat]
+cross.cells entry = List.map (cross.position entry) (List.range 0 (Text.size (pop.word (pop.card (cross.index entry)))))
+cross.hasCell : CrossEntry -> Nat -> Boolean
+cross.hasCell entry position = List.any (p -> p == position) (cross.cells entry)
+cross.letterAt : Text -> Nat -> Text
+cross.letterAt board position = Text.take 1 (Text.drop position board)
+cross.letters : Text -> [Text]
+cross.letters text = List.map (c -> Text.fromCharList [c]) (Text.toCharList text)
+cross.isLetter : Text -> Boolean
+cross.isLetter letter = pop.has letter (cross.letters "abcdefghijklmnopqrstuvwxyz")
+
+cross.cleanBoard : Text -> Text
+cross.cleanBoard input =
+  lowered = Text.toLowercase (Text.take 210 input)
+  cell p =
+    letter = cross.letterAt lowered p
+    if cross.isLetter letter then letter else "."
+  Text.join "" (List.map cell (List.range 0 210))
+
+cross.board : Round -> Text
+cross.board = cases Round _ _ _ _ _ _ _ _ board -> cross.cleanBoard board
+cross.withBoard : Text -> Round -> Round
+cross.withBoard board = cases Round mode n known practice points streak tries step _ -> Round mode n known practice points streak tries step board
+
+cross.answer : CrossEntry -> Text -> Text
+cross.answer entry board = Text.join "" (List.map (cross.letterAt board) (cross.cells entry))
+cross.filled : CrossEntry -> Text -> Boolean
+cross.filled entry board = not (pop.has "." (cross.letters (cross.answer entry board)))
+cross.correct : CrossEntry -> Text -> Boolean
+cross.correct entry board = cross.answer entry board == pop.word (pop.card (cross.index entry))
+cross.filledCount : Text -> Nat
+cross.filledCount board = List.size (List.filter (entry -> cross.filled entry board) cross.entries)
+cross.correctCount : Text -> Nat
+cross.correctCount board = List.size (List.filter (entry -> cross.correct entry board) cross.entries)
+
+cross.validAnswer : CrossEntry -> Text -> Boolean
+cross.validAnswer entry input =
+  answer = pop.normalize input
+  Text.size answer == Text.size (pop.word (pop.card (cross.index entry))) && List.all cross.isLetter (cross.letters answer)
+
+cross.place : CrossEntry -> Text -> Text -> Text
+cross.place entry input board =
+  answer = pop.normalize input
+  offsets = List.range 0 (Text.size (pop.word (pop.card (cross.index entry))))
+  cell p = match List.head (List.filter (offset -> cross.position entry offset == p) offsets) with
+    Some offset -> cross.letterAt answer offset
+    None -> cross.letterAt board p
+  if cross.validAnswer entry answer then Text.join "" (List.map cell (List.range 0 210)) else board
+
+cross.url : Round -> Boolean -> Text
+cross.url round reviewed = pop.url round ++ (if reviewed then "&review=1" else "") ++ "#cross-play"
+
+cross.neighbor : Nat -> Nat -> Nat
+cross.neighbor current delta =
+  position = List.head (List.filter (i -> (List.at i cross.order |> Optional.getOrElse 20) == current) (List.range 0 20)) |> Optional.getOrElse 0
+  List.at (Nat.mod (position + delta) 20) cross.order |> Optional.getOrElse 17
+
+cross.state : CrossEntry -> Text -> Boolean -> Text
+cross.state entry board reviewed =
+  if reviewed && cross.correct entry board then "correct"
+  else if reviewed && cross.filled entry board then "retry"
+  else if cross.filled entry board then "filled"
+  else "empty"
+
+cross.grid : Round -> Boolean -> Text
+cross.grid round reviewed =
+  board = cross.board round
+  selected = cross.entry (pop.current round)
+  cell p =
+    members = List.filter (entry -> cross.hasCell entry p) cross.entries
+    starts = List.filter (entry -> cross.position entry 0 == p) members
+    active = cross.hasCell selected p
+    checked = reviewed && List.any (entry -> cross.correct entry board) members
+    wrong = reviewed && List.any (entry -> cross.filled entry board && not (cross.correct entry board)) members
+    letter = cross.letterAt board p
+    text = "<span class='cw-letter' aria-hidden='true'>" ++ (if letter == "." then "" else Text.toUppercase letter) ++ "</span>"
+    classes = "cw-cell" ++ (if active then " selected" else "") ++ (if checked then " correct" else if wrong then " retry" else "")
+    if List.isEmpty members then "<span class='cw-block' aria-hidden='true'></span>"
+    else match List.head starts with
+      None -> "<span class='" ++ classes ++ "' aria-hidden='true'>" ++ text ++ "</span>"
+      Some first ->
+        -- When Across and Down share a number, tapping it again toggles direction.
+        target = if cross.index first == pop.current round then List.at 1 starts |> Optional.getOrElse first else first
+        "<a class='" ++ classes ++ " cw-start' href='" ++ pop.escape (cross.url (pop.withIndex (cross.index target) round) reviewed) ++ "' aria-label='Select " ++ cross.label target ++ "'><small aria-hidden='true'>" ++ pop.number (cross.num first) ++ "</small>" ++ text ++ "</a>"
+  "<div class='cw-scroll' tabindex='0' role='region' aria-label='Crossword grid; scroll sideways on smaller screens'><div class='cw-grid' role='group' aria-label='15 rows, 14 columns. Tap a numbered square or a clue.'>" ++ Text.join "" (List.map cell (List.range 0 210)) ++ "</div></div>"
+
+cross.clues : Round -> Boolean -> Boolean -> Text
+cross.clues round reviewed across =
+  board = cross.board round
+  indexes = List.filter (i -> cross.across (cross.entry i) == across) cross.order
+  clue i =
+    entry = cross.entry i
+    state = cross.state entry board reviewed
+    status = if state == "correct" then "✓ Correct" else if state == "retry" then "↻ Review" else if state == "filled" then "Filled" else ""
+    label = "<b>" ++ pop.number (cross.num entry) ++ "</b><span>" ++ pop.meaning (pop.card i) ++ " <small>(" ++ pop.number (Text.size (pop.word (pop.card i))) ++ ")</small></span><em>" ++ status ++ "</em>"
+    "<li>" ++ pop.link ("cw-clue " ++ state ++ (if i == pop.current round then " current" else "")) (cross.url (pop.withIndex i round) reviewed) label ++ "</li>"
+  "<section class='cw-clues' aria-label='" ++ (if across then "Across clues" else "Down clues") ++ "'><h2><span aria-hidden='true'>" ++ (if across then "→" else "↓") ++ "</span> " ++ (if across then "Across" else "Down") ++ "</h2><ol>" ++ Text.join "" (List.map clue indexes) ++ "</ol></section>"
+
+cross.editor : Round -> Text -> Text
+cross.editor round notice =
+  board = cross.board round
+  entry = cross.entry (pop.current round)
+  card = pop.card (cross.index entry)
+  answer = cross.answer entry board
+  prefill = if cross.filled entry board then answer else ""
+  pattern = Text.replaceAll "." "·" (Text.toUppercase answer)
+  navigation = "<nav class='cw-editor-nav' aria-label='Choose a crossword clue'>" ++ pop.link "cw-clue-jump" (cross.url (pop.withIndex (cross.neighbor (pop.current round) 19) round) false) "← Previous clue" ++ pop.link "cw-clue-jump" (cross.url (pop.withIndex (cross.neighbor (pop.current round) 1) round) false) "Next clue →" ++ "</nav>"
+  "<section class='cw-editor' aria-labelledby='cw-active-title'><div class='cw-editor-top'><span class='cw-kicker'>YOUR SELECTED CLUE</span><span class='cw-length'>" ++ pop.number (Text.size (pop.word card)) ++ " letters</span></div><h2 id='cw-active-title'>" ++ cross.label entry ++ "</h2><p class='cw-definition'>" ++ pop.meaning card ++ "</p><div class='cw-pattern' aria-label='Current letters: " ++ Text.replaceAll "." " blank " answer ++ "'>" ++ pattern ++ "</div>" ++ (if notice == "" then "" else "<p class='cw-notice' role='status'>" ++ notice ++ "</p>") ++ "<form method='get' action='#cross-play'>" ++ pop.fields round ++ "<label for='cross-answer'>Type the whole word</label><div class='cw-answer-row'><input id='cross-answer' name='entry' value='" ++ pop.escape prefill ++ "' autocomplete='off' autocorrect='off' autocapitalize='none' spellcheck='false' inputmode='text' enterkeyhint='done' maxlength='16' required aria-describedby='cw-entry-help'><button class='btn green' name='crossaction' value='place' type='submit'>Place word →</button></div><p id='cw-entry-help'>Shared letters update both words. You can change your answer anytime.</p></form><details class='cw-hint'><summary>Need a hint?</summary><p>" ++ pop.hint card ++ " It starts with <strong>" ++ Text.toUppercase (Text.take 1 (pop.word card)) ++ "</strong>.</p></details>" ++ navigation ++ "</section>"
+
+cross.review : Text -> Boolean -> Text
+cross.review board reviewed =
+  good = cross.correctCount board
+  filled = cross.filledCount board
+  if not reviewed then "<p class='cw-check-note'>Answers stay unchecked until you choose <strong>Check puzzle</strong>.</p>"
+  else if good == 20 then "<div class='cw-result solved' role='status'>" ++ pop.mascot ++ "<div><span class='cw-kicker'>CHEF'S CHALLENGE COMPLETE</span><h2>All 20 words. Beautifully done.</h2><p>You solved the whole crossword! Your celebration kitchen is ready.</p></div></div>"
+  else "<div class='cw-result' role='status'><div><h2>" ++ pop.number good ++ " of 20 correct</h2><p>" ++ pop.number (filled - good) ++ " filled answers to review · " ++ pop.number (20 - filled) ++ " still have blanks.</p><p>Green means correct. Orange means take another look. No answers are revealed.</p></div></div>"
+
+cross.page : Text -> Round -> HttpRequest -> Text
+cross.page css initial request =
+  entry = cross.entry (pop.current initial)
+  action = pop.param "crossaction" request
+  input = Text.take 16 (pop.param "entry" request)
+  oldBoard = cross.board initial
+  valid = cross.validAnswer entry input
+  newBoard = if action == "place" then cross.place entry input oldBoard else if action == "reset" then cross.cleanBoard "" else oldBoard
+  round = cross.withBoard newBoard initial
+  reviewed = action == "check" || (pop.param "review" request == "1" && not (action == "place") && not (action == "reset"))
+  count = cross.filledCount newBoard
+  complete = reviewed && cross.correctCount newBoard == 20
+  notice = if action == "place" then (if valid then "Word placed. Pick another clue, or check your puzzle." else "Use exactly " ++ pop.number (Text.size (pop.word (pop.card (cross.index entry)))) ++ " letters, A to Z. Your grid has been kept.") else if action == "reset" then "A fresh crossword is ready. Your other game progress is kept." else ""
+  hero = "<section class='cw-hero'><div><span class='cw-kicker'>THE CHEF'S CHALLENGE · LEVEL UP</span><h1>A recipe for<br><em>clever connections.</em></h1><p>20 familiar words. One bigger challenge.<br>Use the clues and crossing letters to solve them all.</p><span class='cw-tag'>▦ CROSSWORD · HARDER MODE</span></div><div class='kitchen-window'>" ++ pop.kitchen (if complete then 20 else 0) ++ "<div class='kitchen-caption'>" ++ (if complete then "The kitchen is yours, Head Chef." else "A celebration kitchen awaits your completed puzzle.") ++ "</div></div></section>"
+  toolbar = "<div class='cw-toolbar'><div><span class='cw-kicker'>RECIPE NO. 01</span><h2>The word kitchen crossword</h2></div><span class='cw-count'><b>" ++ pop.number count ++ "</b> / 20 filled</span></div><div class='cw-meter' role='progressbar' aria-label='Answers filled' aria-valuemin='0' aria-valuemax='20' aria-valuenow='" ++ pop.number count ++ "'><span style='width:" ++ pop.number (count * 5) ++ "%'></span></div>"
+  checkForm = "<form class='cw-check-form' method='get' action='#cross-play'>" ++ pop.fields round ++ "<button class='btn green' name='crossaction' value='check' type='submit'>✓ Check puzzle</button><a class='cw-clue-jump' href='#cross-clues'>Browse all clues ↓</a></form>"
+  resetForm = "<details class='cw-reset'><summary>Start a fresh crossword</summary><p>This clears crossword letters. Your flashcard and spelling scores stay as they are.</p><form method='get' action='#cross-play'>" ++ pop.fields round ++ "<button class='btn yellow' name='crossaction' value='reset' type='submit'>Clear this crossword</button></form></details>"
+  body = "<main class='wrap kitchen-page crossword-page' id='play' data-complete='" ++ (if complete then "true" else "false") ++ "'>" ++ hero ++ pop.tabs round ++ "<section class='cw-workspace' id='cross-play'>" ++ toolbar ++ "<div class='cw-work-area'><div class='cw-board-panel'><div class='cw-board-note'><span>Tap a number or choose a clue.</span><span><i></i> Selected word</span></div>" ++ cross.grid round reviewed ++ "<p class='cw-scroll-help'>On a smaller screen, swipe the grid sideways. The clue buttons work too.</p></div><div class='cw-side'>" ++ cross.editor round notice ++ checkForm ++ cross.review newBoard reviewed ++ "</div></div></section><section id='cross-clues' class='cw-clue-columns' aria-label='All crossword clues'>" ++ cross.clues round reviewed true ++ cross.clues round reviewed false ++ "</section>" ++ resetForm ++ pop.footer ++ "</main>"
+  pop.shell css body
+
+test> cross.tests.layout = check (List.size cross.entries == 20 && List.all (entry -> List.all (p -> p < 210) (cross.cells entry)) cross.entries)
+test> cross.tests.sanitize = check (Text.size (cross.cleanBoard "<SCRIPT>") == 210 && Text.take 8 (cross.cleanBoard "<SCRIPT>") == ".script.")
+test> cross.tests.entry =
+  blank = cross.cleanBoard ""
+  placed = cross.place (cross.entry 0) " SMART " blank
+  check (cross.answer (cross.entry 0) placed == "smart" && cross.correctCount placed == 1 && cross.place (cross.entry 0) "bad" placed == placed)
+test> cross.tests.crossing =
+  first = cross.place (cross.entry 0) "smart" (cross.cleanBoard "")
+  second = cross.place (cross.entry 5) "stormy" first
+  changed = cross.place (cross.entry 5) "xtormy" second
+  check (cross.correctCount second == 2 && cross.answer (cross.entry 0) changed == "xmart" && cross.filledCount changed == 2 && not (cross.correct (cross.entry 0) changed))
+test> cross.tests.complete =
+  solution = List.foldLeft (board entry -> cross.place entry (pop.word (pop.card (cross.index entry))) board) (cross.cleanBoard "") cross.entries
+  check (cross.correctCount solution == 20 && cross.filledCount solution == 20)
+test> cross.tests.preserve =
+  board = cross.place (cross.entry 0) "smart" (cross.cleanBoard "")
+  round = Round "flash" 0 [] [] 0 0 0 0 board
+  check (cross.board (pop.next (pop.master false round)) == board && pop.baked (cross.withBoard (cross.cleanBoard "") (pop.master false round)) == 1)
