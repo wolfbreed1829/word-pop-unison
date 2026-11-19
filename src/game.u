@@ -26,6 +26,26 @@ pop.deck =
   , Card "charcoal" "ar" "A black material used as fuel or for drawing." "The artist used charcoal to draw the trees." "A black drawing material made from heated wood."
   , Card "forecast" "ore" "A prediction of what will happen." "The weather forecast says it will rain tomorrow." "A weather report predicts this."
   , Card "guard" "uar" "To watch over and protect." "Our dog likes to guard the front gate." "To protect or keep watch over something."
+  , Card "unborn" "un" "Not yet born." "The unborn kitten was still growing inside its mother." "Add a prefix meaning not to born."
+  , Card "unlock" "un" "To open something by undoing its lock." "Use the key to unlock the door." "Do the opposite of locking a door."
+  , Card "resell" "re" "To sell something that was bought before." "We can resell the bicycle we no longer use." "Sell something again."
+  , Card "imperfect" "im" "Having a mistake or flaw; not perfect." "The imperfect cookie still tasted delicious." "The opposite of perfect."
+  , Card "subway" "sub" "A train system that usually runs underground." "We took the subway across the city." "An underground way to travel by train."
+  , Card "supersize" "super" "To make something much larger than its usual size." "We will supersize the poster so everyone can see it." "Make the usual size extra large."
+  , Card "unchain" "un" "To free something by removing its chain." "Please unchain the gate so we can open it." "Undo a chain."
+  , Card "rewash" "re" "To wash something again." "I need to rewash the shirt because it is still muddy." "Wash it one more time."
+  , Card "indirect" "in" "Not going straight to a place or point." "We took an indirect route around the closed road." "The opposite of direct."
+  , Card "overact" "over" "To act with too much emotion or movement." "Try not to overact when you read your lines." "Act more dramatically than needed."
+  , Card "premix" "pre" "To mix things together ahead of time." "We can premix the dry ingredients before baking." "Mix before you need it."
+  , Card "unblock" "un" "To remove something that is in the way." "Move the box to unblock the hallway." "Clear a blocked path."
+  , Card "unload" "un" "To take things out of a vehicle or container." "We helped unload the groceries from the car." "The opposite of loading a truck."
+  , Card "relearn" "re" "To learn something again." "After a long break, I had to relearn the song." "Learn a skill one more time."
+  , Card "rewind" "re" "To move a recording back to an earlier part." "Please rewind the video so we can watch that part again." "Go backward in a recording."
+  , Card "incorrect" "in" "Wrong; not correct." "I fixed the incorrect answer on my paper." "The opposite of correct."
+  , Card "overheat" "over" "To become too hot." "An engine can overheat on a very hot day." "Heat up more than it should."
+  , Card "illegal" "il" "Not allowed by law." "It is illegal to steal." "The opposite of legal."
+  , Card "transmit" "trans" "To send something from one place to another." "The radio tower can transmit a signal across town." "Send a message or signal across a distance."
+  , Card "interact" "inter" "To communicate or do things with one another." "We interact with our friends when we play together." "Talk or work with someone else."
   ]
 
 pop.word : Card -> Text
@@ -55,7 +75,22 @@ pop.points : Nat -> Nat
 pop.points tries = if tries == 0 then 10 else 5
 
 pop.card : Nat -> Card
-pop.card n = List.at (Nat.mod n 20) pop.deck |> Optional.getOrElse (Card "smart" "ar" "Quick at learning." "That was a smart idea." "Clever.")
+pop.card n = List.at (Nat.mod n 40) pop.deck |> Optional.getOrElse (Card "smart" "ar" "Quick at learning." "That was a smart idea." "Clever.")
+
+-- Stable indexes keep old bookmarked rounds valid. Each list has 20 words.
+pop.listStart : Nat -> Nat
+pop.listStart n = if n < 20 then 0 else 20
+pop.listIndexes : Nat -> [Nat]
+pop.listIndexes n = List.range (pop.listStart n) (pop.listStart n + 20)
+pop.listName : Nat -> Text
+pop.listName n = if n < 20 then "Original list · ar / or" else "Spelling List V · prefixes"
+pop.move : Nat -> Nat -> Nat
+pop.move n delta = pop.listStart n + Nat.mod (n + delta) 20
+
+pop.lists : Round -> Text
+pop.lists round = match round with Round mode n _ _ _ _ _ _ _ ->
+  option start label = pop.link ("list-choice" ++ (if pop.listStart n == start then " active" else "")) (pop.url (if pop.listStart n == start then round else Round mode start [] [] 0 0 0 0 "")) label
+  "<section class='list-picker' aria-label='Spelling lists'><div><strong>Choose your spelling list</strong><span>20 words in each list · 40 words to practice</span></div><nav>" ++ option 20 "Spelling List V · NEW" ++ option 0 "Original spelling words" ++ "</nav><p>Changing lists starts a fresh round. Bookmark this page to keep your current progress.</p></section>"
 
 pop.has : Text -> [Text] -> Boolean
 pop.has value values = List.any (x -> x == value) values
@@ -120,13 +155,13 @@ pop.treat i =
   "<svg class='treat-art' viewBox='0 0 60 62' aria-hidden='true'>" ++ drawing ++ "</svg>"
 
 pop.tray : Round -> Boolean -> Nat -> Text
-pop.tray round celebrate freshIndex = match round with Round _ _ known _ _ _ _ _ crossword ->
+pop.tray round celebrate freshIndex = match round with Round _ n known _ _ _ _ _ crossword ->
   item i =
     earned = pop.has (pop.number i) known
     classes = "treat-slot" ++ (if earned then " baked" else " locked") ++ (if celebrate && earned && i == freshIndex then " fresh" else "")
-    label = "<span class='sr-only'>Word " ++ pop.number (i + 1) ++ (if earned then ", treat baked" else ", not baked yet") ++ "</span>" ++ pop.treat i ++ "<span class='treat-number'>" ++ (if earned then "✓" else pop.number (i + 1)) ++ "</span>"
+    label = "<span class='sr-only'>Word " ++ pop.number (Nat.mod i 20 + 1) ++ (if earned then ", treat baked" else ", not baked yet") ++ "</span>" ++ pop.treat i ++ "<span class='treat-number'>" ++ (if earned then "✓" else pop.number (Nat.mod i 20 + 1)) ++ "</span>"
     pop.link classes (pop.url (pop.withIndex i round)) label
-  "<div class='bake-shelf'><div class='shelf-label'><strong>Your fresh-baked collection</strong><span>" ++ pop.number (List.size known) ++ " of 20 treats baked</span></div><nav class='treat-tray' aria-label='Your baked treats'>" ++ Text.join "" (List.map item (List.range 0 20)) ++ "</nav></div>"
+  "<div class='bake-shelf'><div class='shelf-label'><strong>Your fresh-baked collection</strong><span>" ++ pop.number (List.size known) ++ " of 20 treats baked</span></div><nav class='treat-tray' aria-label='Your baked treats'>" ++ Text.join "" (List.map item (pop.listIndexes n)) ++ "</nav></div>"
 
 pop.kitchen : Nat -> Text
 pop.kitchen count =
@@ -142,7 +177,7 @@ pop.tabs = cases Round mode n known practice points streak tries step crossword 
   "<nav class='mode-tabs' aria-label='Game modes'>" ++ tab "flash" "▣" "Flashcards" ++ tab "spell" "✎" "Spell it" ++ tab "mix" "⇄" "Word scramble" ++ tab "cross" "▦" "Crossword" ++ "</nav>"
 
 pop.audio : Nat -> Text
-pop.audio n = "<div class='audio-row'><span>↗ HEAR THE WORD</span><audio controls preload='none' aria-label='Listen to the word' src='https://raw.githubusercontent.com/wolfbreed1829/word-pop-unison/f84d9aeda078fa1c426d42476f495291d50d6030/assets/audio/" ++ pop.number n ++ ".wav'>Your browser cannot play audio. Use the clue to practice.</audio></div>"
+pop.audio n = "<div class='audio-row'><span>↗ HEAR THE WORD</span><audio controls preload='none' aria-label='Listen to the word' src='https://raw.githubusercontent.com/wolfbreed1829/word-pop-unison/f36ab60f3f1fe6a3d75c7c614f3309f2b6633ed0/assets/audio/" ++ pop.number n ++ ".wav'>Your browser cannot play audio. Use the clue to practice.</audio></div>"
 
 pop.flash : Round -> Text
 pop.flash round = match round with Round _ n _ _ _ _ _ _ crossword ->
@@ -177,9 +212,9 @@ pop.bank = cases Round mode n known practice points _ _ step crossword ->
     card = pop.card i
     mastered = pop.has (pop.number i) known
     classes = "word-chip" ++ (if i == n then " selected" else "") ++ (if mastered then " done" else "")
-    label = if mode == "flash" then pop.word card else (if mastered then "✓ " else "") ++ pop.number (i + 1)
+    label = if mode == "flash" then pop.word card else (if mastered then "✓ " else "") ++ pop.number (Nat.mod i 20 + 1)
     pop.link classes (pop.url (Round mode i known practice points 0 0 step crossword)) label
-  "<section class='word-bank'><div class='panel-heading'><h2>Your word collection</h2><span>20 words</span></div><div class='word-grid'>" ++ Text.join "" (List.map chip (List.range 0 20)) ++ "</div><p class='bank-foot'><i></i> Green means you've got it!</p></section>"
+  "<section class='word-bank'><div class='panel-heading'><h2>Your word collection</h2><span>20 words</span></div><div class='word-grid'>" ++ Text.join "" (List.map chip (pop.listIndexes n)) ++ "</div><p class='bank-foot'><i></i> Green means you've got it!</p></section>"
 
 pop.sidebar : Round -> Boolean -> Boolean -> Text
 pop.sidebar round celebrate retry =
@@ -202,12 +237,12 @@ pop.shell css body = "<!doctype html><html lang='en'><head><meta charset='utf-8'
 
 pop.help : Text
 pop.help = """
-  <main class="help" id="play"><div class="eyebrow">WELCOME TO THE WORD KITCHEN</div><h1>A recipe for little wins.</h1><section><h2>✦ Build your word kitchen</h2><p>Each newly mastered word bakes a cupcake, cookie, or macaron for your tray. Master 5 words to unlock a mixer, 10 for a cookie jar, 15 for a cake, and all 20 for a kitchen party! Your chef badge grows along with your kitchen. Choosing <strong>Got it!</strong> on a flashcard also adds a treat and earns 5 points. Each word adds one treat per round, so retries and repeated answers never double-count.</p></section><section><h2>▣ Flip a flashcard</h2><p>Read the word out loud, play its recording, and tap the flip button to see what it means. Choose <strong>Got it!</strong> to mark it mastered, or <strong>Practice again</strong> to put it on your practice list.</p></section><section><h2>✎ Give spelling a go</h2><p>Choose <strong>Spell it</strong>, play the word, and type what you hear. A correct first try earns 10 points. A correct answer after another try earns 5. A mistake resets your streak, but you can always try again. Each word earns points once per round.</p></section><section><h2>⇄ Untangle a word</h2><p>Choose <strong>Word scramble</strong> and use all the colorful letters to figure out the word. The meaning, recording, and hint can help. Your progress travels with the game links in this tab. Start a fresh round from the home logo; no account is needed.</p></section><section><h2>▦ Try the chef’s crossword</h2><p>All 20 words connect in one harder puzzle. Tap a numbered square or a clue, type the whole word, and choose <strong>Place word</strong>. Shared letters update both words. Use <strong>Next clue</strong> to keep moving, and <strong>Check puzzle</strong> when you want feedback. Green means correct; orange means review. Hints reveal a helpful clue and first letter. Your crossword letters stay with you when switching game modes. A fresh crossword clears only its own grid.</p></section><section><h2>☀ Make yourself comfortable</h2><p>Everything works with a keyboard: Tab to a control, then Enter or Space. Use your browser zoom for bigger letters. The site follows your reduced-motion setting, and the footer has a pause-motion toggle. Audio only plays when you press play.</p></section><a class="btn purple" href="?">Let's play ↗</a></main>
+  <main class="help" id="play"><div class="eyebrow">WELCOME TO THE WORD KITCHEN</div><h1>A recipe for little wins.</h1><section><h2>✦ Build your word kitchen</h2><p>Each newly mastered word bakes a cupcake, cookie, or macaron for your tray. Master 5 words to unlock a mixer, 10 for a cookie jar, 15 for a cake, and all 20 for a kitchen party! Your chef badge grows along with your kitchen. Choosing <strong>Got it!</strong> on a flashcard also adds a treat and earns 5 points. Each word adds one treat per round, so retries and repeated answers never double-count.</p></section><section><h2>▣ Flip a flashcard</h2><p>Read the word out loud, play its recording, and tap the flip button to see what it means. Choose <strong>Got it!</strong> to mark it mastered, or <strong>Practice again</strong> to put it on your practice list.</p></section><section><h2>✎ Give spelling a go</h2><p>Choose <strong>Spell it</strong>, play the word, and type what you hear. A correct first try earns 10 points. A correct answer after another try earns 5. A mistake resets your streak, but you can always try again. Each word earns points once per round.</p></section><section><h2>⇄ Untangle a word</h2><p>Choose <strong>Word scramble</strong> and use all the colorful letters to figure out the word. The meaning, recording, and hint can help. Your progress travels with the game links in this tab. Start a fresh round from the home logo; no account is needed.</p></section><section><h2>▦ Try the chef’s crossword</h2><p>Choose a spelling list: all 20 of its words connect in its crossword. Tap any letter square or clue to open the answer box, type the whole word, and choose <strong>Place word</strong>. Shared letters update both words. Use <strong>Next clue</strong> to keep moving, and <strong>Check puzzle</strong> when you want feedback. Green means correct; orange means review. Hints reveal a helpful clue and first letter. Your crossword letters stay with you when switching game modes. A fresh crossword clears only its own grid.</p></section><section><h2>☀ Make yourself comfortable</h2><p>Everything works with a keyboard: Tab to a control, then Enter or Space. Use your browser zoom for bigger letters. The site follows your reduced-motion setting, and the footer has a pause-motion toggle. Audio only plays when you press play.</p></section><a class="btn purple" href="?">Let's play ↗</a></main>
   """
 
 pop.next : Round -> Round
 pop.next = cases Round mode n known practice points streak _ step crossword ->
-  Round mode (Nat.mod (n + 1) 20) known practice points streak 0 (step + 1) crossword
+  Round mode (pop.move n 1) known practice points streak 0 (step + 1) crossword
 
 pop.withIndex : Nat -> Round -> Round
 pop.withIndex i = cases Round mode _ known practice points streak _ step crossword -> Round mode i known practice points streak 0 step crossword
@@ -225,13 +260,13 @@ pop.master scored = cases Round mode n known practice points streak tries step c
 
 pop.bottom : Round -> Text
 pop.bottom round = match round with Round _ n known _ _ _ _ _ crossword ->
-  dots = Text.join "" (List.map (i -> "<i class='" ++ (if i == n then "current" else if pop.has (pop.number i) known then "done" else "") ++ "'></i>") (List.range 0 20))
-  "<div class='card-foot'><span>One word at a time. ✨</span><div class='progress-dots' aria-hidden='true'>" ++ dots ++ "</div><div class='round-nav'>" ++ pop.link "circle-btn" (pop.url (pop.withIndex (Nat.mod (n + 19) 20) round)) "<span aria-label='Previous word'>←</span>" ++ pop.link "circle-btn" (pop.url (pop.withIndex (Nat.mod (n + 1) 20) round)) "<span aria-label='Next word'>→</span>" ++ "</div></div>"
+  dots = Text.join "" (List.map (i -> "<i class='" ++ (if i == n then "current" else if pop.has (pop.number i) known then "done" else "") ++ "'></i>") (pop.listIndexes n))
+  "<div class='card-foot'><span>One word at a time. ✨</span><div class='progress-dots' aria-hidden='true'>" ++ dots ++ "</div><div class='round-nav'>" ++ pop.link "circle-btn" (pop.url (pop.withIndex (pop.move n 19) round)) "<span aria-label='Previous word'>←</span>" ++ pop.link "circle-btn" (pop.url (pop.withIndex (pop.move n 1) round)) "<span aria-label='Next word'>→</span>" ++ "</div></div>"
 
 pop.finished : Round -> Text
-pop.finished = cases Round mode _ known practice points _ _ _ crossword ->
-  restart = Round mode 0 [] [] 0 0 0 0 crossword
-  practiceIndex = List.head practice |> Optional.flatMap Nat.fromText |> Optional.getOrElse 0
+pop.finished = cases Round mode n known practice points _ _ _ crossword ->
+  restart = Round mode (pop.listStart n) [] [] 0 0 0 0 crossword
+  practiceIndex = List.head practice |> Optional.flatMap Nat.fromText |> Optional.getOrElse (pop.listStart n)
   practiceLink = if List.size practice > 0 then pop.link "btn yellow" (pop.url (Round mode practiceIndex known practice points 0 0 0 crossword)) "Revisit a tricky word ↗" else ""
   "<div class='finished'>" ++ pop.confetti ++ pop.mascot ++ "<h2>Your batch is ready!</h2><p>You completed your spelling challenge.<br>Every word is another ingredient for success.</p><div class='score-big'>" ++ pop.number points ++ "<span style='font-size:25px'> ★</span></div><p>" ++ pop.number (List.size known) ++ " words mastered · " ++ pop.number (List.size practice) ++ " to practice</p><div class='actions'>" ++ practiceLink ++ pop.link "btn purple" (pop.url restart) "Play a fresh round ↗" ++ "</div></div>"
 
@@ -255,9 +290,9 @@ pop.page css initial answer action =
     retry = not (answer == "") && not (mode == "flash") && not (pop.correct (pop.card n) answer)
     stageTitle = if mode == "flash" then "TODAY'S RECIPE: A LITTLE PRACTICE." else if mode == "spell" then "READY, SET, BAKE A WORD!" else "MIX UP A LITTLE LETTER MAGIC."
     tip = if mode == "flash" then "Say it. Cover it. Spell it!" else if mode == "spell" then "Listen for the little sounds." else "Look for letters that like to stick together."
-    tipBody = if mode == "flash" then "Say the word out loud, flip the card, then try spelling it from memory." else if mode == "spell" then "Play the word again. Break it into sounds. Put those sounds back together." else "Try finding ar, or, and ore. These letter teams can help you find the word."
-    shuffle = pop.withIndex (Nat.mod (n + 7) 20) afterAction
-    body = "<main class='wrap kitchen-page" ++ (if freshTreat then " new-treat" else "") ++ "' id='play' data-baked='" ++ pop.number (pop.baked displayRound) ++ "'>" ++ pop.hero displayRound freshTreat (pop.current initial) ++ "<div class='layout'><section class='play-area' aria-label='Spelling game'>" ++ pop.tabs displayRound ++ (if freshTreat then "<div class='bake-toast' role='status'><span aria-hidden='true'>✦</span> A fresh treat just landed in your kitchen! <strong>" ++ pop.number (pop.baked displayRound) ++ " / 20 baked</strong></div>" else "") ++ "<div class='card-stage'><div class='stage-top'><span>" ++ stageTitle ++ "</span><b>" ++ pop.number (Nat.min 20 (step + 1)) ++ " / 20</b></div>" ++ pop.content afterAction answer action ++ "</div>" ++ pop.bottom displayRound ++ "<div class='tip'><div class='tip-icon' aria-hidden='true'>☀</div><div><strong>" ++ tip ++ "</strong><p>" ++ tipBody ++ "</p></div></div><div class='motivation'>" ++ pop.link "shuffle" (pop.url shuffle) "⇄ Surprise me with another word" ++ "</div></section><aside class='sidebar' aria-label='Your progress and words'>" ++ pop.sidebar displayRound freshTreat retry ++ "</aside></div>" ++ pop.footer ++ "</main>"
+    tipBody = if mode == "flash" then "Say the word out loud, flip the card, then try spelling it from memory." else if mode == "spell" then "Play the word again. Break it into sounds. Put those sounds back together." else if pop.listStart n == 20 then "Look for prefixes such as un, re, and over. They change the meaning of a word." else "Try finding ar, or, and ore. These letter teams can help you find the word."
+    shuffle = pop.withIndex (pop.move n 7) afterAction
+    body = "<main class='wrap kitchen-page" ++ (if freshTreat then " new-treat" else "") ++ "' id='play' data-baked='" ++ pop.number (pop.baked displayRound) ++ "'>" ++ pop.lists displayRound ++ pop.hero displayRound freshTreat (pop.current initial) ++ "<div class='layout'><section class='play-area' aria-label='Spelling game'>" ++ pop.tabs displayRound ++ (if freshTreat then "<div class='bake-toast' role='status'><span aria-hidden='true'>✦</span> A fresh treat just landed in your kitchen! <strong>" ++ pop.number (pop.baked displayRound) ++ " / 20 baked</strong></div>" else "") ++ "<div class='card-stage'><div class='stage-top'><span>" ++ stageTitle ++ "</span><b>" ++ pop.number (Nat.min 20 (step + 1)) ++ " / 20</b></div>" ++ pop.content afterAction answer action ++ "</div>" ++ pop.bottom displayRound ++ "<div class='tip'><div class='tip-icon' aria-hidden='true'>☀</div><div><strong>" ++ tip ++ "</strong><p>" ++ tipBody ++ "</p></div></div><div class='motivation'>" ++ pop.link "shuffle" (pop.url shuffle) "⇄ Surprise me with another word" ++ "</div></section><aside class='sidebar' aria-label='Your progress and words'>" ++ pop.sidebar displayRound freshTreat retry ++ "</aside></div>" ++ pop.footer ++ "</main>"
     pop.shell css body
 
 pop.param : Text -> HttpRequest -> Text
@@ -272,23 +307,24 @@ pop.param key request =
 pop.natParam : Text -> HttpRequest -> Nat
 pop.natParam key request = pop.param key request |> Nat.fromText |> Optional.getOrElse 0
 
-pop.indexes : Text -> [Text]
-pop.indexes value =
+pop.indexes : Nat -> Text -> [Text]
+pop.indexes n value =
   values = Text.splitOnText "," (Text.take 100 value)
-  List.filter (x -> pop.has x values) (List.map pop.number (List.range 0 20))
+  List.filter (x -> pop.has x values) (List.map pop.number (pop.listIndexes n))
 
 pop.round : HttpRequest -> Round
 pop.round request =
   mode = pop.param "m" request
+  n = if pop.param "n" request == "" && pop.param "cw" request == "" && pop.param "k" request == "" then 20 else Nat.mod (pop.natParam "n" request) 40
   Round (if mode == "spell" || mode == "mix" || mode == "cross" then mode else "flash")
-    (Nat.mod (pop.natParam "n" request) 20)
-    (pop.indexes (pop.param "k" request))
-    (pop.indexes (pop.param "p" request))
+    n
+    (pop.indexes n (pop.param "k" request))
+    (pop.indexes n (pop.param "p" request))
     (Nat.min 200 (pop.natParam "s" request))
     (Nat.min 20 (pop.natParam "r" request))
     (Nat.min 1 (pop.natParam "t" request))
     (Nat.min 20 (pop.natParam "step" request))
-    (if pop.param "cw" request == "" then "" else cross.cleanBoard (pop.param "cw" request))
+    (if pop.param "cw" request == "" then "" else cross.cleanBoard n (pop.param "cw" request))
 
 pop.response : Text -> Bytes -> HttpResponse
 pop.response kind bytes =
@@ -312,7 +348,7 @@ pop.assets : '{IO, Exception} (Text, [Bytes])
 pop.assets = do
   css = lib.unison_base_7_20_0.IO.FilePath.readFileUtf8 (FilePath "assets/style.css")
   kitchenCss = lib.unison_base_7_20_0.IO.FilePath.readFileUtf8 (FilePath "assets/kitchen.css")
-  clips = List.map (n -> lib.unison_base_7_20_0.IO.FilePath.readFile (FilePath ("assets/audio/" ++ pop.number n ++ ".wav"))) (List.range 0 20)
+  clips = List.map (n -> lib.unison_base_7_20_0.IO.FilePath.readFile (FilePath ("assets/audio/" ++ pop.number n ++ ".wav"))) (List.range 0 40)
   studioCss = lib.unison_base_7_20_0.IO.FilePath.readFileUtf8 (FilePath "assets/studio.css")
   crossCss = lib.unison_base_7_20_0.IO.FilePath.readFileUtf8 (FilePath "assets/crossword.css")
   (css ++ kitchenCss ++ studioCss ++ crossCss, clips)
@@ -334,14 +370,14 @@ pop.deploy = do
   url = lib.unison_cloud_27_3_1.Cloud.main do
     -- This handler is pure. Deploy it directly without the pooled ability wrapper,
     -- so rendering a page does not require selecting another worker location.
-    -- Audio is served from an immutable public GitHub commit, so the 1.5 MB
+    -- Audio is served from an immutable public GitHub commit, so the
     -- recording collection is not captured in every game request's closure.
     hash = lib.unison_cloud_27_3_1.Cloud.deploy.remote (lib.unison_cloud_27_3_1.Environment.default()) (pop.service css [])
     _ = lib.unison_cloud_27_3_1.Cloud.exposeHttp hash
     lib.unison_cloud_27_3_1.ServiceName.assign (lib.unison_cloud_27_3_1.ServiceName.named "word-pop") hash
   printLine (lib.unison_base_7_20_0.IO.net.URI.toText (url()))
 
-test> pop.tests.deck = check (List.size pop.deck == 20 && pop.word (pop.card 19) == "guard")
+test> pop.tests.deck = check (List.size pop.deck == 40 && pop.word (pop.card 19) == "guard" && pop.word (pop.card 20) == "unborn" && pop.word (pop.card 39) == "interact")
 test> pop.tests.answers = check (pop.correct (pop.card 0) " SMART " && not (pop.correct (pop.card 0) "smrt") && not (pop.correct (pop.card 0) ""))
 test> pop.tests.points = check (pop.points 0 == 10 && pop.points 1 == 5)
 test> pop.tests.master =
@@ -350,10 +386,12 @@ test> pop.tests.master =
   twice = pop.master true once
   check (pop.url once == pop.url twice && pop.url once == "?m=spell&n=0&k=0&p=&s=10&r=1&t=0&step=0")
 test> pop.tests.retry = check (pop.url (pop.master true (pop.practiceAgain (Round "spell" 0 [] [] 0 4 0 0 ""))) == "?m=spell&n=0&k=0&p=&s=5&r=1&t=1&step=0")
-test> pop.tests.indexes = check (Text.join "," (pop.indexes "3,3,99,<script>,1") == "1,3")
+test> pop.tests.indexes = check (Text.join "," (pop.indexes 0 "3,3,99,<script>,1") == "1,3")
 test> pop.tests.escape = check (pop.escape "<script>" == "&lt;script&gt;")
 test> pop.tests.kitchenLevels = check (pop.level 0 == 0 && pop.level 4 == 0 && pop.level 5 == 1 && pop.level 10 == 2 && pop.level 15 == 3 && pop.level 20 == 4)
 test> pop.tests.kitchenRewards =
   initial = Round "spell" 0 [] [] 0 0 0 0 ""
   earned = pop.master true initial
   check (pop.baked (pop.practiceAgain initial) == 0 && pop.baked earned == 1 && pop.baked (pop.master true earned) == 1 && pop.baked (pop.next earned) == 1)
+
+test> pop.tests.lists = check (pop.current (pop.next (Round "spell" 39 [] [] 0 0 0 0 "")) == 20 && pop.move 20 19 == 39 && Text.join "," (pop.indexes 20 "0,19,20,39,40") == "20,39")

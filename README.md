@@ -4,7 +4,9 @@ A culinary spelling adventure for a nine-year-old, written in **Unison** and hos
 
 **Play:** https://wolfbreed1829.unison-services.cloud/s/word-pop/
 
-**Crossword:** https://wolfbreed1829.unison-services.cloud/s/word-pop/?m=cross
+**Crossword (Spelling List V):** https://wolfbreed1829.unison-services.cloud/s/word-pop/?m=cross&n=20
+
+**Original crossword:** https://wolfbreed1829.unison-services.cloud/s/word-pop/?m=cross&n=0
 
 ## A kitchen that grows with you
 
@@ -28,7 +30,9 @@ Open the play link in Safari. Portrait mode places the game above the score and 
 - **Flashcards:** read, listen, flip for a meaning and example, then choose “Got it!” or “Practice again.” A newly mastered word earns 5 points.
 - **Spell it:** listen to the recording and type the word. The first correct attempt earns 10 points; a correct retry earns 5.
 - **Word scramble:** use the colorful letter tiles, definition, and recording to find the word.
-- **Chef's crossword:** a harder, connected 15-by-14 puzzle containing all 20 words. Definition clues and shared letters replace the visible word bank. Select a numbered square or clue, type a whole answer, and choose **Place word**. Previous/Next clue buttons avoid repeated scrolling. **Check puzzle** marks correct and incorrect filled words without revealing answers; optional hints give a second clue and first letter. Completing all 20 unlocks the celebration kitchen.
+- **Chef's crossword:** a connected puzzle for each spelling list: 15-by-14 for the original words and 18-by-15 for List V. Every puzzle contains exactly its 20 spelling words. Tap any letter square or clue to jump to the answer box, type a whole answer, and choose **Place word** or press Enter. A collapsible spelling-word list provides optional help. Previous/Next clue buttons avoid repeated scrolling. **Check puzzle** marks correct and incorrect filled words without revealing answers; optional hints give a second clue and first letter. Completing all 20 unlocks the celebration kitchen.
+
+The home page starts with **Spelling List V**. Choose either list above the game; switching lists starts a fresh round, so bookmark the current URL to retain a round before switching. Each list has 20 words, its own crossword, and the same kitchen rewards. Old bookmarked URLs keep their original word indexes.
 
 Every word can earn points once in a round. Switching modes retains progress. Progress travels in ordinary links and form fields in the current tab; bookmark the current URL to keep it. There are no accounts, cookies, analytics, database, or shared leaderboard. Scores are for personal practice and are not tamper-proof. The home logo starts a fresh round.
 
@@ -36,7 +40,9 @@ The crossword keeps its own letter grid alongside the original game scores. Swit
 
 ## Included words
 
-smart, award, charge, worn, argue, stormy, bore, ward, warp, backyard, door, dart, fort, morning, carpet, core, spark, charcoal, forecast, guard.
+**Spelling List V (new):** unborn, unlock, resell, imperfect, subway, supersize, unchain, rewash, indirect, overact, premix, unblock, unload, relearn, rewind, incorrect, overheat, illegal, transmit, interact.
+
+**Original list:** smart, award, charge, worn, argue, stormy, bore, ward, warp, backyard, door, dart, fort, morning, carpet, core, spark, charcoal, forecast, guard.
 
 ## Run on Windows
 
@@ -64,16 +70,16 @@ ucm run.compiled .ucm/deploy.uc
 
 ## Source map
 
-- `src/game.u` — typed deck, answer normalization, scoring, rounds, interactive kitchen rendering, HTTP service, local server, deployment, and the original nine native Unison test groups.
-- `src/crossword.u` — connected crossword layout, shared-letter board, answer entry, checking, clues, page rendering, and six native Unison test groups.
+- `src/game.u` — typed deck, answer normalization, scoring, rounds, interactive kitchen rendering, HTTP service, local server, deployment, and ten native Unison test groups, including list boundaries.
+- `src/crossword.u` — connected crossword layout, shared-letter board, answer entry, checking, clues, page rendering, and seven native Unison test groups covering both lists.
 - `assets/style.css` — base layout and responsive styles. Manrope is loaded from Google Fonts with a system-font fallback.
 - `assets/kitchen.css` — kitchen layout, collectible treats, chef badges, and CSS reward animations.
 - `assets/studio.css` — realistic junior-chef styling, photographic stages, and iPad/touch layouts.
 - `assets/crossword.css` — crossword grid, recipe-style clue editor, checking states, and responsive touch layout.
 - `assets/chef-kitchen-v2.png` — generated artwork containing five kitchen stages, selected with CSS background positioning.
 - `assets/kitchen-artwork.txt` — artwork source and generation prompt.
-- `assets/audio/*.wav` — the 20 word recordings, included in the repository.
-- `scripts/audio.ps1` — optional Windows speech synthesis regeneration; not required to run the app.
+- `assets/audio/*.wav` — all 40 word recordings, included in the repository.
+- `scripts/audio.ps1` — Windows speech synthesis for missing word recordings, read directly from the deck; not required to run the app.
 - `scripts/build.ps1` — UCM transcript orchestration. There is no Node/npm toolchain.
 - `scripts/check-crossword.py` — optional independent geometry audit; Python is used only for development checks.
 
@@ -81,10 +87,16 @@ The spelling app deliberately sends `Content-Security-Policy: script-src 'none'`
 
 ## Verification
 
-Verified with UCM 1.3.0:
+Verified November 19, 2026 with UCM 1.3.0:
 
-- All fifteen native Unison test groups pass: the original nine plus crossword bounds, input sanitization, entry validation, crossing edits, full solution, and progress preservation.
-- `python scripts/check-crossword.py` independently verifies all 20 words appear exactly once, crossing letters agree, clue numbers follow reading order, every word connects to the same grid, and there are no unintended adjacent words.
+- All 17 native Unison test groups pass.
+- `python scripts/check-crossword.py` verifies each list's 20 words appear exactly once, crossing letters agree, clue numbers follow reading order, every word connects to the same grid, and there are no unintended adjacent words.
+- `python scripts/check-game.py` passes against the local server: all 40 crossword answers across two puzzles, action-independent keyboard submissions, invalid and incorrect entries, selection links for every letter square, mode switching, completion, refresh, and reset preserving spelling progress. It also completes all 20 List V spelling words for 200 points, checks the restart and scramble, and checks each recording URL.
+- All 20 new WAV files have valid audio data. The answer form now carries `crossaction=place` in a hidden field; submissions no longer depend on a clicked button sending its name/value. The server also accepts legacy forms with an answer but no action.
+- Browser automation was unavailable for this revision, so the prior visual and WebKit checks below are historical, not a new iPad verification.
+
+Earlier browser verification (November 16?18):
+
 - Browser checks cover card flipping, mastery, mistakes and retries, case/space normalization, audio playback, word scramble, and an entire 20-word spelling round reaching 200 points.
 - A full round completes with browser JavaScript disabled. A round including one incorrect attempt produces 20 treats, all four kitchen unlocks, and 195 points. Refreshing a correct answer preserves the treat count.
 - Keyboard card flipping, the pause-motion toggle, reduced-motion preferences, native audio, and flashcard reward animation were checked.
@@ -93,6 +105,6 @@ Verified with UCM 1.3.0:
 - The crossword passed a complete 20-word WebKit touch playthrough with JavaScript disabled: invalid-length rejection, wrong/correct manual checks, shared-letter updates, hint disclosure, shared-number Across/Down toggling, previous/next navigation, mode switching, completion, refresh, and reset without losing spelling scores. Layouts at 390, 768, 820, 1024, 1180, and 1366 pixels have no page overflow and primary targets are at least 44 pixels. The original game checks were rerun successfully after adding the fourth mode.
 - The November 18, 2026 Unison Cloud deployment passed live browser checks for opening the crossword, placing a word, and checking the puzzle.
 
-Public Unison Cloud requests intermittently timed out or returned HTTP 500 during checks on November 16, 2026. Those errors were not reproduced in the November 18 crossword smoke check; this does not establish long-term hosting reliability.
+Public Unison Cloud requests intermittently timed out or returned HTTP 500 during checks on November 16, 2026. An initial request also timed out on November 19; subsequent home and crossword requests succeeded. This does not establish long-term hosting reliability.
 
 The hosted application is on Unison Cloud. GitHub stores its source; GitHub Pages is not used because this application runs native Unison on the server.

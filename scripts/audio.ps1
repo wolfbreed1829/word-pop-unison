@@ -6,12 +6,15 @@ $voice = $speech.GetInstalledVoices() | Where-Object { $_.VoiceInfo.Name -like '
 if ($voice) { $speech.SelectVoice($voice.VoiceInfo.Name) }
 $audioDirectory = Join-Path $PSScriptRoot '../assets/audio'
 New-Item -ItemType Directory -Force -Path $audioDirectory | Out-Null
-$words = 'smart','award','charge','worn','argue','stormy','bore','ward','warp','backyard','door','dart','fort','morning','carpet','core','spark','charcoal','forecast','guard'
+$gameSource = Get-Content -Raw -Encoding UTF8 (Join-Path $PSScriptRoot '../src/game.u')
+$deckSource = ($gameSource -split 'pop.word :', 2)[0]
+$words = @([regex]::Matches($deckSource, 'Card "([a-z]+)"') | ForEach-Object { $_.Groups[1].Value })
 for ($i = 0; $i -lt $words.Count; $i++) {
   $audioPath = [IO.Path]::GetFullPath((Join-Path $audioDirectory "$i.wav"))
+  if (Test-Path -LiteralPath $audioPath) { continue }
   $speech.SetOutputToWaveFile($audioPath)
   $speech.Speak($words[$i])
   $speech.SetOutputToNull()
 }
 $speech.Dispose()
-Write-Output 'Created 20 spoken word clips for native browser audio playback.'
+Write-Output "Verified $($words.Count) spoken word clips for native browser audio playback."
