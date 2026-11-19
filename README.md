@@ -93,6 +93,7 @@ Verified November 19, 2026 with UCM 1.3.0:
 - `python scripts/check-crossword.py` verifies each list's 20 words appear exactly once, crossing letters agree, clue numbers follow reading order, every word connects to the same grid, and there are no unintended adjacent words.
 - `python scripts/check-game.py` passes against the local server: all 40 crossword answers across two puzzles, action-independent keyboard submissions, invalid and incorrect entries, selection links for every letter square, mode switching, completion, refresh, and reset preserving spelling progress. It also completes all 20 List V spelling words for 200 points, checks the restart and scramble, and checks each recording URL.
 - All 20 new WAV files have valid audio data. The answer form now carries `crossaction=place` in a hidden field; submissions no longer depend on a clicked button sending its name/value. The server also accepts legacy forms with an answer but no action.
+- The November 19 Unison Cloud deployment passed live HTTP checks for saving and checking an answer in each crossword, editor links on every letter square, preserving the board when selecting the active list, and opening List V by default. All 20 new public recordings matched their local file hashes. Some live requests timed out; retrying succeeded.
 - Browser automation was unavailable for this revision, so the prior visual and WebKit checks below are historical, not a new iPad verification.
 
 Earlier browser verification (November 16?18):
